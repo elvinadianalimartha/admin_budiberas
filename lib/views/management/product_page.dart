@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors
 import 'package:budiberas_admin_9701/views/widgets/product_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -88,12 +89,18 @@ class _ProductPageState extends State<ProductPage> {
         children: [
           btnAddProduct(),
           search(),
-          ListView(
-            padding: EdgeInsets.all(20),
-            shrinkWrap: true,
-            children: [
-              ProductCard()
-            ],
+          SizedBox(height: 20,),
+          Expanded(
+            child: ListView(
+              //padding: EdgeInsets.all(20),
+              shrinkWrap: true,
+              children: [
+                ProductCard(),
+                ProductCard(),
+                ProductCard(),
+                ProductCard()
+              ],
+            ),
           )
         ],
       );

@@ -7,11 +7,15 @@ double defaultMargin = 20.0;
 Color primaryColor = Color(0xff1A607A);
 Color secondaryColor = Color(0xff5BC5A7);
 Color thirdColor = Color(0xff7DD1B9);
+
 Color btnManageColor = Color(0xffCBFBED);
 Color btnColor = Color(0xffF59F02);
 Color outlinedBtnColor = Color(0xff504F5E);
+
 Color alertColor = Color(0xffED6363);
 Color priceColor = Color(0xff39A284);
+Color formColor = Color(0xffF3F4FA);
+
 Color primaryTextColor = Color(0xff000000);
 Color secondaryTextColor = Color(0xff999999);
 Color transparentColor = Colors.transparent;

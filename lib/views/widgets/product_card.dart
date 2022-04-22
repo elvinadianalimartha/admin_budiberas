@@ -4,12 +4,18 @@ import 'package:flutter/material.dart';
 import '../../theme.dart';
 
 class ProductCard extends StatelessWidget {
+  const ProductCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(
+        bottom: 20,
+        left: 20,
+        right: 20,
+      ),
       width: double.infinity,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border.all(color: secondaryTextColor.withOpacity(0.8), width: 0.5),
         color: Colors.white,
@@ -30,53 +36,65 @@ class ProductCard extends StatelessWidget {
                     )
                 ),
               ),
+
+              const SizedBox(width: 16,),
+
               //Product data
-              SizedBox(width: 16,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Minyak Bimoli Spesial 2 liter',
-                    style: primaryTextStyle.copyWith(
-                      fontWeight: semiBold,
-                    ),
-                  ),
-                  SizedBox(height: 4,),
-                  Text(
-                    'Rp 45.000',
-                    style: priceTextStyle.copyWith(
-                      fontWeight: medium,
-                    ),
-                  ),
-                  SizedBox(height: 4,),
-                  Row(
-                    children: [
-                      Text(
-                        'Stok: 0',
-                        style: secondaryTextStyle.copyWith(
-                          fontWeight: medium,
-                          fontSize: 13,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            'Minyak Bimoli Spesial 2 liter',
+                            style: primaryTextStyle.copyWith(
+                              fontWeight: semiBold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 4,),
+                    Text(
+                      'Rp 45.000',
+                      style: priceTextStyle.copyWith(
+                        fontWeight: medium,
                       ),
-                      SizedBox(width: 12,),
-                      Container(
-                        color: Color(0xffEBEBEB),
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: Text(
-                          'Tidak aktif',
+                    ),
+                    const SizedBox(height: 4,),
+                    Row(
+                      children: [
+                        Text(
+                          'Stok: 0',
                           style: secondaryTextStyle.copyWith(
                             fontWeight: medium,
-                            fontSize: 12,
+                            fontSize: 13,
                           ),
+                        ),
+                        const SizedBox(width: 12,),
+                        Container(
+                          color: const Color(0xffEBEBEB),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          child: Text(
+                            'Tidak aktif',
+                            style: secondaryTextStyle.copyWith(
+                              fontWeight: medium,
+                              fontSize: 12,
+                            ),
+                          )
                         )
-                      )
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               )
             ],
           ),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           Row(
             children: [
               OutlinedButton(
@@ -89,7 +107,7 @@ class ProductCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)
                   ),
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                 ),
                 child: Row(
                   children: [
@@ -98,11 +116,11 @@ class ProductCard extends StatelessWidget {
                           color: btnColor,
                           shape: BoxShape.circle,
                         ),
-                        padding: EdgeInsets.all(4),
-                        child: Icon(Icons.edit, color: Colors.white, size: 14
+                        padding: const EdgeInsets.all(4),
+                        child: const Icon(Icons.edit, color: Colors.white, size: 14
                           ,)
                     ),
-                    SizedBox(width: 11,),
+                    const SizedBox(width: 11,),
                     Text(
                       'Ubah',
                       style: changeBtnTextStyle.copyWith(
@@ -113,7 +131,7 @@ class ProductCard extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 20,),
+              const SizedBox(width: 20,),
               OutlinedButton(
                 onPressed: () {
                 },
@@ -124,13 +142,13 @@ class ProductCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)
                   ),
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                 ),
                 child: Row(
                   children: [
                     //Icon(Icons.delete, color: alertColor, size: 22,),
                     Image.asset('assets/delete_icon.png', width: 16,),
-                    SizedBox(width: 9,),
+                    const SizedBox(width: 9,),
                     Text(
                       'Hapus',
                       style: alertTextStyle.copyWith(
