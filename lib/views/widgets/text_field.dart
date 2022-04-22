@@ -1,57 +1,69 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../theme.dart';
 
-class TextField extends StatelessWidget {
-  const TextField({Key? key}) : super(key: key);
+class TextFormFieldWidget extends StatefulWidget {
+  final TextInputType? textInputType; //numeric or usual
+  final List<TextInputFormatter>? inputFormatter; //format for input (lowercase, using regex, etc)
+  final String hintText;
+  final Widget? prefixIcon;
+  final Widget? prefix; //prefix like Rp
+  final FocusNode? focusNode;
+  final bool obscureText;
+  final TextEditingController? controller;
+  final Function? functionValidate;
+  final String? parametersValidate;
+  final TextInputAction? actionKeyboard; //done, search, next, etc.
+  final FormFieldValidator<String>? validator;
+
+  const TextFormFieldWidget({
+    Key? key,
+    this.textInputType,
+    this.inputFormatter,
+    required this.hintText,
+    this.prefixIcon,
+    this.prefix,
+    this.focusNode,
+    this.obscureText = false,
+    this.controller,
+    this.functionValidate,
+    this.parametersValidate,
+    this.actionKeyboard = TextInputAction.next,
+    this.validator,
+  }) : super(key: key);
 
   @override
+  _TextFormFieldWidgetState createState() => _TextFormFieldWidgetState();
+}
+
+class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(top: 50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Full Name',
-              style: primaryTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: medium
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Container(
-              height: 50,
-              padding: EdgeInsets.symmetric(
-                  horizontal: 16
-              ),
-              decoration: BoxDecoration(
-                  //color: backgroundColor2,
-                  borderRadius: BorderRadius.circular(12)
-              ),
-              child: Center(
-                child: Row(
-                  children: [
-                    Icon(Icons.person, color: primaryColor),
-                    SizedBox(width: 16,),
-                    Expanded( //expanded supaya dia lebarnya selebar ruang yg tersisa
-                      child: TextFormField(
-                        style: primaryTextStyle,
-                        //controller: nameController,
-                        decoration: InputDecoration.collapsed(
-                            hintText: 'Your full name',
-                            //hintStyle: subtitleTextStyle
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      );
+    return TextFormField(
+      keyboardType: widget.textInputType,
+      inputFormatters: widget.inputFormatter,
+      textInputAction: widget.actionKeyboard,
+      obscureText: widget.obscureText,
+      focusNode: widget.focusNode,
+      style: primaryTextStyle,
+      decoration: InputDecoration(
+        isCollapsed: true,
+        border: InputBorder.none,
+        prefixIcon: widget.prefixIcon,
+        prefix: widget.prefix,
+        hintText: widget.hintText,
+        hintStyle: secondaryTextStyle,
+      ),
+      controller: widget.controller,
+      validator: widget.validator,
+      // validator: (value) {
+      //   if(widget.functionValidate != null) {
+      //     widget.functionValidate!(value, widget.parametersValidate);
+      //   }
+      //   return null;
+      // },
+    );
   }
 }
