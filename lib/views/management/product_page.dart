@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme.dart';
+import '../widgets/reusable/add_button.dart';
+import '../widgets/reusable/app_bar.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
@@ -24,30 +26,13 @@ class _ProductPageState extends State<ProductPage> {
           alignment: Alignment.topRight,
           child: SizedBox(
             width: 170,
-            child: TextButton(
-              onPressed: () {
+            child: addButton(
+              onClick: () {
                 Navigator.pushNamed(context, '/form-add-product');
               },
-              style: TextButton.styleFrom(
-                backgroundColor: priceColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)
-                ),
-                padding: EdgeInsets.all(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.add_circle_outlined, color: btnManageColor,),
-                  SizedBox(width: 11,),
-                  Text(
-                    'Tambah Produk',
-                    style: whiteTextStyle.copyWith(
-                      fontWeight: medium,
-                    ),
-                  )
-                ],
-              ),
-            ),
+              icon: Icons.add_circle_outlined,
+              text: 'Tambah Produk'
+            )
           ),
         ),
       );
@@ -71,6 +56,7 @@ class _ProductPageState extends State<ProductPage> {
                 child: TextFormField(
                   style: primaryTextStyle,
                   controller: searchController,
+                  textInputAction: TextInputAction.search,
                   decoration: InputDecoration.collapsed(
                       hintText: 'Cari nama produk',
                       hintStyle: secondaryTextStyle
@@ -107,17 +93,8 @@ class _ProductPageState extends State<ProductPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Daftar Produk',
-          style: whiteTextStyle.copyWith(
-            fontWeight: semiBold,
-            fontSize: 16,
-          ),
-        ),
+      appBar: customAppBar(
+          text: 'Daftar Produk'
       ),
       body: content(),
     );

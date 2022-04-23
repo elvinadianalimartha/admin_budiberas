@@ -1,8 +1,10 @@
-import 'package:budiberas_admin_9701/views/widgets/text_field.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../theme.dart';
+import '../widgets/reusable/done_button.dart';
 
 class FormAddProduct extends StatefulWidget {
   const FormAddProduct({Key? key}) : super(key: key);
@@ -15,6 +17,8 @@ class _FormAddProductState extends State<FormAddProduct> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController productNameController = TextEditingController(text: '');
   TextEditingController sizeController = TextEditingController(text: '');
+  TextEditingController priceController = TextEditingController(text: '');
+  TextEditingController descriptionController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -28,29 +32,23 @@ class _FormAddProductState extends State<FormAddProduct> {
               fontWeight: medium,
             ),
           ),
+          Text(
+            'Merek produk + ukuran',
+            style: secondaryTextStyle.copyWith(
+              fontSize: 11
+            ),
+          ),
           const SizedBox(height: 8,),
-          Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16
-            ),
-            decoration: BoxDecoration(
-                color: formColor,
-                borderRadius: BorderRadius.circular(12)
-            ),
-            child: Center(
-              child: TextFormFieldWidget(
-                hintText: 'Masukkan nama produk',
-                controller: productNameController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Nama produk harus diisi';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          )
+          TextFormFieldWidget(
+            hintText: 'Masukkan nama produk',
+            controller: productNameController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Nama produk harus diisi';
+              }
+              return null;
+            },
+          ),
         ],
       );
     }
@@ -66,59 +64,100 @@ class _FormAddProductState extends State<FormAddProduct> {
             ),
           ),
           const SizedBox(height: 8,),
-          Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16
+          TextFormFieldWidget(
+            hintText: 'Masukkan ukuran produk',
+            controller: sizeController,
+            textInputType: TextInputType.number,
+            inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Ukuran harus diisi';
+              }
+              return null;
+            },
+          ),
+        ],
+      );
+    }
+
+    Widget productPrice() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Harga',
+            style: primaryTextStyle.copyWith(
+              fontWeight: medium,
             ),
-            decoration: BoxDecoration(
-                color: formColor,
-                borderRadius: BorderRadius.circular(12)
+          ),
+          const SizedBox(height: 8,),
+          TextFormFieldWidget(
+            hintText: '',
+            prefixIcon: Text(
+                '\t\t\t\tRp\t\t',
+              style: secondaryTextStyle
             ),
-            child: Center(
-              child: TextFormFieldWidget(
-                hintText: 'Masukkan ukuran produk',
-                controller: sizeController,
-                textInputType: TextInputType.number,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Ukuran harus diisi';
-                  }
-                  return null;
-                },
-              ),
+            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+            controller: priceController,
+            textInputType: TextInputType.number,
+            inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Harga produk harus diisi';
+              }
+              return null;
+            },
+          ),
+        ],
+      );
+    }
+
+    Widget productDescription() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Deskripsi produk',
+            style: primaryTextStyle.copyWith(
+              fontWeight: medium,
             ),
-          )
+          ),
+          Text(
+            'Spesifikasi produk, kelebihannya',
+            style: secondaryTextStyle.copyWith(
+                fontSize: 11
+            ),
+          ),
+          const SizedBox(height: 8,),
+          TextFormFieldWidget(
+            hintText: 'Tuliskan deskripsi produk',
+            controller: descriptionController,
+            textInputType: TextInputType.multiline,
+            actionKeyboard: TextInputAction.done,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Deskripsi produk harus diisi';
+              }
+              return null;
+            },
+          ),
         ],
       );
     }
 
     Widget saveButton(){
-      return Container(
+      return SizedBox(
         height: 50,
         width: double.infinity, //supaya selebar layar
-        margin: EdgeInsets.only(top: 30),
-        child: TextButton(
-            onPressed: () {
-              if(_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Data berhasil tersimpan')),
-                );
-              }
-            },
-            style: TextButton.styleFrom(
-                backgroundColor: btnColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)
-                )
-            ),
-            child: Text(
-              'Simpan',
-              style: whiteTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: medium
-              ),
-            )
+        child: doneButton(
+          text: 'Simpan',
+          onClick: () {
+            if(_formKey.currentState!.validate()) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Data berhasil tersimpan')),
+              );
+            }
+          },
         ),
       );
     }
@@ -131,9 +170,13 @@ class _FormAddProductState extends State<FormAddProduct> {
             shrinkWrap: true,
             children: [
               productName(),
-              const SizedBox(height: 16,),
+              const SizedBox(height: 20,),
               productSize(),
-              const SizedBox(height: 24,),
+              const SizedBox(height: 20,),
+              productPrice(),
+              const SizedBox(height: 20,),
+              productDescription(),
+              const SizedBox(height: 36,),
               saveButton(),
             ]
         )
@@ -156,11 +199,4 @@ class _FormAddProductState extends State<FormAddProduct> {
       body: content(),
     );
   }
-}
-
-String? requiredValidator(String? value, String messageError) {
-  if (value == null || value.isEmpty) {
-    return messageError;
-  }
-  return null;
 }

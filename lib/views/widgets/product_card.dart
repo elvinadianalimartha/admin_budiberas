@@ -1,3 +1,5 @@
+import 'package:budiberas_admin_9701/views/widgets/reusable/delete_button.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/edit_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -97,68 +99,16 @@ class ProductCard extends StatelessWidget {
           const SizedBox(height: 10,),
           Row(
             children: [
-              OutlinedButton(
-                onPressed: () {
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    color: btnColor,
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)
-                  ),
-                  padding: const EdgeInsets.all(8),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                        decoration: BoxDecoration(
-                          color: btnColor,
-                          shape: BoxShape.circle,
-                        ),
-                        padding: const EdgeInsets.all(4),
-                        child: const Icon(Icons.edit, color: Colors.white, size: 14
-                          ,)
-                    ),
-                    const SizedBox(width: 11,),
-                    Text(
-                      'Ubah',
-                      style: changeBtnTextStyle.copyWith(
-                        fontWeight: medium,
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
-                ),
+              editButton(
+                onClick: () {
+                }
               ),
               const SizedBox(width: 20,),
-              OutlinedButton(
-                onPressed: () {
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    color: alertColor,
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)
-                  ),
-                  padding: const EdgeInsets.all(8),
-                ),
-                child: Row(
-                  children: [
-                    //Icon(Icons.delete, color: alertColor, size: 22,),
-                    Image.asset('assets/delete_icon.png', width: 16,),
-                    const SizedBox(width: 9,),
-                    Text(
-                      'Hapus',
-                      style: alertTextStyle.copyWith(
-                        fontWeight: medium,
-                        fontSize: 13,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              deleteButton(
+                onClick: () {
+
+                }
+              )
             ],
           )
         ],

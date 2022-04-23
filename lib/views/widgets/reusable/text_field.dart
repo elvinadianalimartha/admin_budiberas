@@ -2,19 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../theme.dart';
+import '../../../theme.dart';
 
 class TextFormFieldWidget extends StatefulWidget {
   final TextInputType? textInputType; //numeric or usual
   final List<TextInputFormatter>? inputFormatter; //format for input (lowercase, using regex, etc)
   final String hintText;
   final Widget? prefixIcon;
-  final Widget? prefix; //prefix like Rp
+  final Widget? prefix;
+  final BoxConstraints? prefixIconConstraints;
+  final Widget? suffixIcon;
   final FocusNode? focusNode;
   final bool obscureText;
   final TextEditingController? controller;
-  final Function? functionValidate;
-  final String? parametersValidate;
   final TextInputAction? actionKeyboard; //done, search, next, etc.
   final FormFieldValidator<String>? validator;
 
@@ -25,11 +25,11 @@ class TextFormFieldWidget extends StatefulWidget {
     required this.hintText,
     this.prefixIcon,
     this.prefix,
+    this.suffixIcon,
+    this.prefixIconConstraints,
     this.focusNode,
     this.obscureText = false,
     this.controller,
-    this.functionValidate,
-    this.parametersValidate,
     this.actionKeyboard = TextInputAction.next,
     this.validator,
   }) : super(key: key);
@@ -50,20 +50,24 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
       style: primaryTextStyle,
       decoration: InputDecoration(
         isCollapsed: true,
-        border: InputBorder.none,
+        isDense: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
         prefixIcon: widget.prefixIcon,
+        prefixIconConstraints: widget.prefixIconConstraints,
         prefix: widget.prefix,
+        suffixIcon: widget.suffixIcon,
         hintText: widget.hintText,
         hintStyle: secondaryTextStyle,
+        filled: true,
+        fillColor: formColor,
+        contentPadding: const EdgeInsets.all(16),
       ),
       controller: widget.controller,
       validator: widget.validator,
-      // validator: (value) {
-      //   if(widget.functionValidate != null) {
-      //     widget.functionValidate!(value, widget.parametersValidate);
-      //   }
-      //   return null;
-      // },
+      maxLines: null,
     );
   }
 }
