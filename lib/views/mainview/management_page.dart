@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:budiberas_admin_9701/providers/category_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/management_option_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme.dart';
+import '../widgets/reusable/app_bar.dart';
 
 class ManagementPage extends StatefulWidget {
   const ManagementPage({Key? key}) : super(key: key);
@@ -13,6 +16,16 @@ class ManagementPage extends StatefulWidget {
 }
 
 class _ManagementPageState extends State<ManagementPage> {
+  @override
+  void initState() {
+    getInit();
+    super.initState();
+  }
+
+  getInit() async {
+    await Provider.of<CategoryProvider>(context, listen: false).getCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content() {
@@ -69,17 +82,8 @@ class _ManagementPageState extends State<ManagementPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Kelola Produk, Stok, Filter',
-          style: whiteTextStyle.copyWith(
-            fontWeight: semiBold,
-            fontSize: 16,
-          ),
-        ),
+      appBar: customAppBar(
+          text: 'Kelola Produk, Stok, Filter'
       ),
       body: content(),
     );
