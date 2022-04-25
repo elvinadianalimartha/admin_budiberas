@@ -5,6 +5,7 @@ import '../services/category_service.dart';
 
 class CategoryProvider with ChangeNotifier{
   List<CategoryModel> _categories = [];
+  bool loading = false;
 
   List<CategoryModel> get categories => _categories;
 
@@ -14,9 +15,12 @@ class CategoryProvider with ChangeNotifier{
   }
 
   Future<void> getCategories() async {
+    loading = true;
     try{
       List<CategoryModel> categories = await CategoryService().getCategories();
       _categories = categories; //_categories akan diisi dengan data categories yg didapat dr fungsi getCategories backend
+      loading = false;
+      notifyListeners();
     } catch(e) {
       print(e);
     }

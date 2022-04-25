@@ -1,1 +1,1 @@
-const String baseUrl = 'https://shamo-backend.buildwithangga.id/api';
+const String baseUrl = 'http://192.168.100.36:8000/api';

@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 
 import '../../../theme.dart';
 
-TextButton doneButton({
+OutlinedButton cancelButton({
   VoidCallback? onClick,
-  required String text,
+  String text = 'Batal',
   double fontSize = 16,
 }) {
-  return TextButton(
+  return OutlinedButton(
     onPressed: onClick,
-    style: TextButton.styleFrom(
-      backgroundColor: btnColor,
+    style: OutlinedButton.styleFrom(
+      side: BorderSide(
+        color: outlinedBtnColor,
+      ),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12)
+          borderRadius: BorderRadius.circular(8)
       ),
       padding: const EdgeInsets.symmetric(
           vertical: 12,
@@ -22,7 +24,7 @@ TextButton doneButton({
     ),
     child: Text(
       text,
-      style: whiteTextStyle.copyWith(
+      style: greyTextStyle.copyWith(
         fontSize: fontSize,
         fontWeight: medium,
       ),

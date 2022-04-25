@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:budiberas_admin_9701/providers/category_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/management_option_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../theme.dart';
 import '../widgets/reusable/app_bar.dart';
@@ -16,16 +14,6 @@ class ManagementPage extends StatefulWidget {
 }
 
 class _ManagementPageState extends State<ManagementPage> {
-  @override
-  void initState() {
-    getInit();
-    super.initState();
-  }
-
-  getInit() async {
-    await Provider.of<CategoryProvider>(context, listen: false).getCategories();
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget content() {

@@ -10,7 +10,7 @@ Color thirdColor = Color(0xff7DD1B9);
 
 Color btnManageColor = Color(0xffCBFBED);
 Color btnColor = Color(0xffF59F02);
-Color outlinedBtnColor = Color(0xff504F5E);
+Color outlinedBtnColor = Color(0xff808191);
 
 Color alertColor = Color(0xffED6363);
 Color priceColor = Color(0xff39A284);
@@ -24,9 +24,9 @@ TextStyle primaryTextStyle = GoogleFonts.poppins(color: primaryTextColor);
 TextStyle secondaryTextStyle = GoogleFonts.poppins(color: secondaryTextColor);
 
 TextStyle whiteTextStyle = GoogleFonts.poppins(color: Colors.white);
+TextStyle greyTextStyle = GoogleFonts.poppins(color: outlinedBtnColor);
 
 TextStyle labelTextStyle = GoogleFonts.poppins(color: secondaryColor);
-TextStyle categoryTextStyle = GoogleFonts.poppins(color: outlinedBtnColor);
 TextStyle priceTextStyle = GoogleFonts.poppins(color: priceColor);
 
 TextStyle changeBtnTextStyle = GoogleFonts.poppins(color: btnColor);

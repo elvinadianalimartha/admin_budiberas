@@ -1,18 +1,18 @@
 class CategoryModel{
   late int id;
-  late String name;
+  late String category_name;
 
-  CategoryModel({required this.id, required this.name});
+  CategoryModel({required this.id, required this.category_name});
 
   CategoryModel.fromJson(Map<String, dynamic> json){
     id = json['id'];
-    name = json['name'];
+    category_name = json['category_name'];
   }
 
   Map<String, dynamic> toJson(){
     return{
       'id': id,
-      'name': name,
+      'category_name': category_name,
     };
   }
 }
