@@ -25,4 +25,59 @@ class CategoryProvider with ChangeNotifier{
       print(e);
     }
   }
+
+  Future<bool> createCategory({
+    String category_name = '',
+  }) async {
+    loading = true;
+    try{
+      if(await CategoryService().createCategory(category_name: category_name)) {
+        loading = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateCategory({
+    int id = 0,
+    String category_name = '',
+  }) async {
+    loading = true;
+    try{
+      if(await CategoryService().updateCategory(id: id, category_name: category_name)) {
+        loading = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> deleteCategory({
+    int id = 0,
+  }) async {
+    loading = true;
+    try{
+      if(await CategoryService().deleteCategory(id: id)) {
+        loading = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
 }
