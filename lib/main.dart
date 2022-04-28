@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:budiberas_admin_9701/providers/category_provider.dart';
+import 'package:budiberas_admin_9701/providers/gallery_provider.dart';
 import 'package:budiberas_admin_9701/providers/page_provider.dart';
+import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/theme.dart';
 import 'package:budiberas_admin_9701/views/form/add_product.dart';
 import 'package:budiberas_admin_9701/views/mainview/main_page.dart';
@@ -21,7 +23,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PageProvider(),),
-        ChangeNotifierProvider(create: (context) => CategoryProvider(),)
+        ChangeNotifierProvider(create: (context) => CategoryProvider(),),
+        ChangeNotifierProvider(create: (context) => ProductProvider(),),
+        ChangeNotifierProvider(create: (context) => GalleryProvider(),),
       ],
       child: MaterialApp(
         theme: ThemeData(

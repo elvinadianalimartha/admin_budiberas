@@ -2,11 +2,17 @@ import 'package:budiberas_admin_9701/views/widgets/reusable/delete_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/edit_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:budiberas_admin_9701/constants.dart' as constants;
 
+import '../../models/product_model.dart';
 import '../../theme.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({Key? key}) : super(key: key);
+  final ProductModel product;
+  ProductCard(this.product);
+
+  var formatter = NumberFormat.decimalPattern('id');
 
   @override
   Widget build(BuildContext context) {
@@ -28,21 +34,24 @@ class ProductCard extends StatelessWidget {
           Row(
             children: [
               //Photo
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: AssetImage('assets/indomie.png'),
-                    )
-                ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: product.galleries.isNotEmpty ?
+                Image.network(
+                  constants.urlPhoto + product.galleries[0].url.toString(),
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    return Icon(Icons.image, color: secondaryTextColor, size: 60,);
+                  },
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ): Icon(Icons.image, color: secondaryTextColor, size: 60,),
               ),
 
               const SizedBox(width: 16,),
 
               //Product data
-              Expanded(
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -50,7 +59,7 @@ class ProductCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            'Minyak Bimoli Spesial 2 liter',
+                            product.name,
                             style: primaryTextStyle.copyWith(
                               fontWeight: semiBold,
                             ),
@@ -62,7 +71,7 @@ class ProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4,),
                     Text(
-                      'Rp 45.000',
+                      'Rp ${formatter.format(product.price)}',
                       style: priceTextStyle.copyWith(
                         fontWeight: medium,
                       ),
@@ -71,24 +80,26 @@ class ProductCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Stok: 0',
+                          'Stok: ${product.stock}',
                           style: secondaryTextStyle.copyWith(
                             fontWeight: medium,
                             fontSize: 13,
                           ),
                         ),
                         const SizedBox(width: 12,),
-                        Container(
-                          color: const Color(0xffEBEBEB),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(
-                            'Tidak aktif',
-                            style: secondaryTextStyle.copyWith(
-                              fontWeight: medium,
-                              fontSize: 12,
-                            ),
-                          )
-                        )
+                        product.stockStatus.toLowerCase() == 'tidak aktif' ?
+                          Container(
+                            color: const Color(0xffEBEBEB),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text(
+                              'Tidak aktif',
+                              style: secondaryTextStyle.copyWith(
+                                fontWeight: medium,
+                                fontSize: 12,
+                              ),
+                            )
+                          ) :
+                          const SizedBox(),
                       ],
                     )
                   ],

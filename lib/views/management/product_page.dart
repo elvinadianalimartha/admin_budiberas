@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/product_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme.dart';
 import '../widgets/reusable/add_button.dart';
@@ -15,10 +17,20 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  TextEditingController searchController = TextEditingController(text: '');
+  @override
+  void initState() {
+    super.initState();
+    getInit();
+  }
+
+  getInit() async {
+    await Provider.of<ProductProvider>(context, listen: false).getProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController searchController = TextEditingController(text: '');
+
     Widget btnAddProduct() {
       return Padding(
         padding: const EdgeInsets.all(16),
@@ -77,17 +89,25 @@ class _ProductPageState extends State<ProductPage> {
           search(),
           SizedBox(height: 20,),
           Expanded(
-            child: ListView(
-              //padding: EdgeInsets.all(20),
-              shrinkWrap: true,
-              children: [
-                ProductCard(),
-                ProductCard(),
-                ProductCard(),
-                ProductCard()
-              ],
-            ),
-          )
+            child: Consumer<ProductProvider>(
+              builder: (context, data, child) {
+                return SizedBox(
+                  child: data.loading ?
+                  Center(
+                    child: CircularProgressIndicator(),
+                  )
+                  :
+                  ListView(
+                    shrinkWrap: true,
+                    children: data.products
+                    .map(
+                        (product) => ProductCard(product)
+                    ).toList(),
+                  )
+                );
+              },
+            )
+          ),
         ],
       );
     }
