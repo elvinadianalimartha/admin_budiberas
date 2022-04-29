@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:budiberas_admin_9701/models/product_model.dart';
 import 'package:budiberas_admin_9701/services/product_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,24 +27,38 @@ class ProductProvider with ChangeNotifier{
     }
   }
 
-  // Future<bool> createCategory({
-  //   String category_name = '',
-  // }) async {
-  //   loading = true;
-  //   try{
-  //     if(await CategoryService().createCategory(category_name: category_name)) {
-  //       loading = false;
-  //       notifyListeners();
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   }catch(e) {
-  //     print(e);
-  //     return false;
-  //   }
-  // }
-  //
+  Future<bool> createProduct({
+    required int categoryId,
+    required String name,
+    required double size,
+    required double price,
+    required String description,
+    required int canBeRetailed,
+    List<File>? productGalleries,
+  }) async {
+    //loading = true;
+    try{
+      if(await ProductService().createProduct(
+          categoryId: categoryId,
+          name: name,
+          size: size,
+          price: price,
+          description: description,
+          canBeRetailed: canBeRetailed,
+          productGalleries: productGalleries,
+      )) {
+        // loading = false;
+        // notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
   // Future<bool> updateCategory({
   //   int id = 0,
   //   String category_name = '',

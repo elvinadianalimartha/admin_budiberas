@@ -1,3 +1,4 @@
+import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/add_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/text_field.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,6 +29,8 @@ class _FormAddProductState extends State<FormAddProduct> {
   TextEditingController priceController = TextEditingController(text: '');
   TextEditingController descriptionController = TextEditingController(text: '');
   File? image;
+  Object? _value;
+  int? _intValue;
 
   @override
   void initState() {
@@ -38,11 +41,50 @@ class _FormAddProductState extends State<FormAddProduct> {
   getInit() async {
     await Provider.of<CategoryProvider>(context, listen: false).getCategories();
     Provider.of<GalleryProvider>(context, listen: false).galleries;
+    Provider.of<ProductProvider>(context, listen: false).products;
   }
 
   @override
   Widget build(BuildContext context) {
     print('=== build from scratch ===');
+
+    resetForm() {
+      _intValue = null;
+      productNameController.clear();
+      sizeController.clear();
+      priceController.clear();
+      descriptionController.clear();
+    }
+
+    handleAddData(ProductProvider productProvider, GalleryProvider galleryProvider) async {
+      var photoUrl = galleryProvider.galleries.map(
+              (e) => File(e.url!)
+      ).toList();
+      print(photoUrl);
+
+      if(await productProvider.createProduct(
+        categoryId: _intValue!,
+        name: productNameController.text,
+        size: double.parse(sizeController.text),
+        price: double.parse(priceController.text),
+        description: descriptionController.text,
+        canBeRetailed: 1, //bikin pilihan
+        productGalleries: photoUrl,
+      )) {
+        resetForm();
+        galleryProvider.galleries.clear();
+        //productProvider.getProducts();
+        Navigator.pushNamedAndRemoveUntil(context, '/manage-product', (route) => false);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Data gagal ditambahkan'),
+            backgroundColor: alertColor,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
 
     Future<ImageSource?> choosePhotoSource(context) async {
       if(Platform.isIOS) {
@@ -100,32 +142,34 @@ class _FormAddProductState extends State<FormAddProduct> {
         height: 100,
         child: Consumer<GalleryProvider>(
             builder: (context, galleryProvider, child){
-              return ListView.builder(
-                  itemCount: galleryProvider.galleries.length,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.all(16),
-                  itemBuilder: (context, index) {
-                    GalleryModel image = galleryProvider.galleries[index];
-                    return Stack(
-                      children: [
-                        image.url != null
-                            ? Image.file(File(image.url ?? ''), width: 100,)
-                            : Icon(Icons.image, color: secondaryTextColor, size: 60,),
-                        Positioned(
-                          top: 0,
-                          right: 12,
-                          child: InkWell(
-                              onTap: () {
-                                galleryProvider.removePhotoTemp(image.tempId);
-                              },
-                              child: Image.asset('assets/cancel_icon.png', width: 24,)
-                          ),
+              return ListView.separated(
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(width: 8,);
+                },
+                itemCount: galleryProvider.galleries.length,
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  GalleryModel image = galleryProvider.galleries[index];
+                  return Stack(
+                    children: [
+                      image.url != null
+                          ? Image.file(File(image.url ?? ''), width: 100,)
+                          : Icon(Icons.image, color: secondaryTextColor, size: 60,),
+                      Positioned(
+                        top: 0,
+                        right: 12,
+                        child: InkWell(
+                            onTap: () {
+                              galleryProvider.removePhotoTemp(image.tempId);
+                            },
+                            child: Image.asset('assets/cancel_icon.png', width: 24,)
                         ),
-                      ],
-                    );
-                  }
+                      ),
+                    ],
+                  );
+                },
               );
             }
         ),
@@ -158,6 +202,7 @@ class _FormAddProductState extends State<FormAddProduct> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 12,),
                 galleryProvider.galleries.isEmpty
                     ? const SizedBox()
                     : samplePhoto(),
@@ -181,7 +226,7 @@ class _FormAddProductState extends State<FormAddProduct> {
           const SizedBox(height: 8,),
           Consumer<CategoryProvider>(
             builder: (context, data, child) {
-              List<CategoryModel> listCategories = data.categories.toList();
+              List<CategoryModel> listCategories = data.categories;
               return DropdownButtonFormField(
                   validator: (value) {
                     if (value == null) {
@@ -207,7 +252,10 @@ class _FormAddProductState extends State<FormAddProduct> {
                       value: item.id,
                     );
                   }).toList(),
-                  onChanged: (_) {
+                  onChanged: (value) {
+                    _value = value;
+                    _intValue = _value as int;
+                    print(_intValue);
                   }
               );
             },
@@ -344,19 +392,21 @@ class _FormAddProductState extends State<FormAddProduct> {
     }
 
     Widget saveButton(){
-      return SizedBox(
-        height: 50,
-        width: double.infinity, //supaya selebar layar
-        child: doneButton(
-          text: 'Simpan',
-          onClick: () {
-            if(_formKey.currentState!.validate()) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Data berhasil tersimpan')),
-              );
-            }
-          },
-        ),
+      return Consumer2<ProductProvider, GalleryProvider>(
+        builder: (context, productProvider, galleryProvider, child) {
+          return SizedBox(
+            height: 50,
+            width: double.infinity, //supaya selebar layar
+            child: doneButton(
+              text: 'Simpan',
+              onClick: () {
+                if(_formKey.currentState!.validate()) {
+                  handleAddData(productProvider, galleryProvider);
+                }
+              },
+            ),
+          );
+        }
       );
     }
 
