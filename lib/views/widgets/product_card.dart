@@ -10,7 +10,10 @@ import '../../theme.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
-  ProductCard(this.product);
+  ProductCard({
+    required this.product,
+    Key? key,
+}) : super(key: key);
 
   var formatter = NumberFormat.decimalPattern('id');
 

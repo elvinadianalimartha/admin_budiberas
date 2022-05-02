@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/product_model.dart';
 import '../../theme.dart';
 import '../widgets/reusable/add_button.dart';
 import '../widgets/reusable/app_bar.dart';
@@ -17,10 +18,19 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  TextEditingController searchController = TextEditingController(text: '');
+  bool statusFilled = false;
+
   @override
   void initState() {
     super.initState();
     getInit();
+  }
+
+  @override
+  void dispose() {
+    searchController.clear();
+    super.dispose();
   }
 
   getInit() async {
@@ -29,7 +39,13 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = TextEditingController(text: '');
+    print("== build product page from scratch");
+
+    void clearSearch() {
+      searchController.clear();
+      statusFilled = false;
+      context.read<ProductProvider>().searchProduct('');
+    }
 
     Widget btnAddProduct() {
       return Padding(
@@ -37,48 +53,59 @@ class _ProductPageState extends State<ProductPage> {
         child: Align(
           alignment: Alignment.topRight,
           child: SizedBox(
-            width: 170,
-            child: addButton(
-              onClick: () {
-                Navigator.pushNamed(context, '/form-add-product');
-              },
-              icon: Icons.add_circle_outlined,
-              text: 'Tambah Produk'
-            )
+              width: 170,
+              child: addButton(
+                  onClick: () {
+                    Navigator.pushNamed(context, '/form-add-product');
+                    clearSearch();
+                  },
+                  icon: Icons.add_circle_outlined,
+                  text: 'Tambah Produk'
+              )
           ),
         ),
       );
     }
 
     Widget search() {
-      return Container(
-        height: 45,
-        width: MediaQuery.of(context).size.width - 40,
-        padding: EdgeInsets.symmetric(
-            horizontal: 16
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(color: secondaryTextColor.withOpacity(0.8), width: 0.5),
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  style: primaryTextStyle,
-                  controller: searchController,
-                  textInputAction: TextInputAction.search,
-                  decoration: InputDecoration.collapsed(
-                      hintText: 'Cari nama produk',
-                      hintStyle: secondaryTextStyle
-                  ),
+      return Consumer<ProductProvider>(
+        builder: (context, productProvider, child) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: TextFormField(
+              style: primaryTextStyle,
+              controller: searchController,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                isCollapsed: true,
+                isDense: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: secondaryTextColor),
                 ),
+                hintText: 'Cari nama produk',
+                hintStyle: secondaryTextStyle,
+                prefixIcon: Icon(Icons.search, color: secondaryTextColor, size: 20,),
+                suffixIcon: statusFilled
+                    ? InkWell(
+                        onTap: () {
+                          clearSearch();
+                        },
+                        child: Icon(Icons.cancel, color: secondaryTextColor, size: 20,))
+                    : null,
+                contentPadding: const EdgeInsets.all(12),
               ),
-              SizedBox(width: 16,),
-              Icon(Icons.search, color: secondaryTextColor,),
-            ]
-        ),
+              onChanged: (value) {
+                productProvider.searchProduct(value);
+                if(value.isNotEmpty) {
+                  statusFilled = true;
+                } else {
+                  statusFilled = false;
+                }
+              },
+            ),
+          );
+        }
       );
     }
 
@@ -88,35 +115,43 @@ class _ProductPageState extends State<ProductPage> {
           btnAddProduct(),
           search(),
           SizedBox(height: 20,),
-          Expanded(
-            child: Consumer<ProductProvider>(
-              builder: (context, data, child) {
-                return SizedBox(
-                  child: data.loading ?
-                  Center(
-                    child: CircularProgressIndicator(),
-                  )
-                  :
-                  ListView(
-                    shrinkWrap: true,
-                    children: data.products
-                    .map(
-                        (product) => ProductCard(product)
-                    ).toList(),
-                  )
-                );
-              },
-            )
+          Flexible(
+              child: Consumer<ProductProvider>(
+                builder: (context, data, child) {
+                  return SizedBox(
+                      child: data.loading ?
+                      Center(
+                        child: CircularProgressIndicator(),
+                      )
+                      :
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: data.products.length,
+                        itemBuilder: (context, index) {
+                          ProductModel product = data.products[index];
+                          return ProductCard(product: product);
+                        },
+                      )
+                  );
+                },
+              )
           ),
         ],
       );
     }
 
-    return Scaffold(
-      appBar: customAppBar(
-          text: 'Daftar Produk'
+    return WillPopScope(
+      onWillPop: () {
+        context.read<ProductProvider>().disposeValues();
+        Navigator.pop(context);
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: customAppBar(
+            text: 'Daftar Produk'
+        ),
+        body: content(),
       ),
-      body: content(),
     );
   }
 }

@@ -23,6 +23,8 @@ class ProductModel{
 
   late List<GalleryModel> galleries;
 
+  late DateTime fixCreatedAt;
+
   ProductModel({
     required this.id,
     required this.name,
@@ -56,16 +58,16 @@ class ProductModel{
     galleries = json['product_galleries']
         .map<GalleryModel>((gallery) => GalleryModel.fromJson(gallery)).toList();
 
-    final format = DateFormat('dd/MM/yyyy hh:mm:ss');
+    final format = DateFormat('dd/MM/yyyy HH:mm:ss');
 
     DateTime parseCreated = format.parse(json['created_at']); //sesuaikan penulisan dgn backend
     DateTime parseUpdated = format.parse(json['updated_at']);
     //DateTime parseDeleted = format.parse(json['deleted_at']);
 
-    createdAt = DateFormat('hh:mm a').format(parseCreated);
-    updatedAt = DateFormat('hh:mm a').format(parseUpdated);
+    createdAt = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(parseCreated);
+    updatedAt = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(parseUpdated);
 
-    //deletedAt = DateFormat('hh:mm a').format(parseDeleted);
+    fixCreatedAt = DateTime.parse(createdAt);
   }
 
   Map<String, dynamic> toJson() {

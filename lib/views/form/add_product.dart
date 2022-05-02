@@ -1,5 +1,6 @@
 import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/add_button.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/app_bar.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class _FormAddProductState extends State<FormAddProduct> {
   TextEditingController sizeController = TextEditingController(text: '');
   TextEditingController priceController = TextEditingController(text: '');
   TextEditingController descriptionController = TextEditingController(text: '');
+
   File? image;
   Object? _value;
   int? _intValue;
@@ -68,13 +70,25 @@ class _FormAddProductState extends State<FormAddProduct> {
         size: double.parse(sizeController.text),
         price: double.parse(priceController.text),
         description: descriptionController.text,
-        canBeRetailed: 1, //bikin pilihan
+        canBeRetailed: productProvider.selectedValue,
         productGalleries: photoUrl,
       )) {
+
+        //Reset to starting condition
         resetForm();
         galleryProvider.galleries.clear();
-        //productProvider.getProducts();
-        Navigator.pushNamedAndRemoveUntil(context, '/manage-product', (route) => false);
+        productProvider.selectedValue = 1;
+
+        //Go to manage product page with newly created product
+        productProvider.getProducts();
+        Navigator.popUntil(context, ModalRoute.withName('/manage-product'));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Data berhasil ditambahkan'),
+            backgroundColor: secondaryColor,
+            duration: const Duration(seconds: 2),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -248,7 +262,7 @@ class _FormAddProductState extends State<FormAddProduct> {
                   hint: Text('Pilih kategory produk', style: secondaryTextStyle,),
                   items: listCategories.map((item) {
                     return DropdownMenuItem<Object>(
-                      child: Text(item.category_name, style: primaryTextStyle,),
+                      child: Text(item.category_name, style: primaryTextStyle.copyWith(fontSize: 14),),
                       value: item.id,
                     );
                   }).toList(),
@@ -319,6 +333,54 @@ class _FormAddProductState extends State<FormAddProduct> {
               }
               return null;
             },
+          ),
+        ],
+      );
+    }
+
+    Widget chooseRetailed() {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Bisa diecer?',
+            style: primaryTextStyle.copyWith(
+              fontWeight: medium,
+            ),
+          ),
+          Consumer<ProductProvider>(
+            builder: (context, productProvider, child) {
+              print(productProvider.selectedValue);
+              return Row(
+                children: [
+                  Flexible(
+                    child: RadioListTile<int>(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      value: 1,
+                      groupValue: productProvider.selectedValue,
+                      onChanged: (value) {
+                        productProvider.changeRetailedValue(value!);
+                      },
+                      title: Text('Ya', style: primaryTextStyle.copyWith(fontSize: 14),),
+                      activeColor: priceColor,
+                    ),
+                  ),
+                  Flexible(
+                    child: RadioListTile<int>(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      value: 0,
+                      groupValue: context.read<ProductProvider>().selectedValue,
+                      onChanged: (value) {
+                        productProvider.changeRetailedValue(value!);
+                      },
+                      title: Text('Tidak', style: primaryTextStyle.copyWith(fontSize: 14)),
+                      activeColor: priceColor,
+                    ),
+                  ),
+                ],
+              );
+            }
           ),
         ],
       );
@@ -426,6 +488,8 @@ class _FormAddProductState extends State<FormAddProduct> {
                 const SizedBox(height: 20,),
                 productSize(),
                 const SizedBox(height: 20,),
+                chooseRetailed(),
+                const SizedBox(height: 20,),
                 productPrice(),
                 const SizedBox(height: 20,),
                 productDescription(),
@@ -444,18 +508,7 @@ class _FormAddProductState extends State<FormAddProduct> {
         return Future.value(false);
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: primaryColor,
-          elevation: 0,
-          centerTitle: true,
-          title: Text(
-            'Form Tambah Produk',
-            style: whiteTextStyle.copyWith(
-              fontWeight: semiBold,
-              fontSize: 16,
-            ),
-          ),
-        ),
+        appBar: customAppBar(text: 'Form Tambah Produk'),
         body: content(),
       ),
     );

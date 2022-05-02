@@ -9,8 +9,11 @@ class ProductService{
 
   Future<List<ProductModel>> getProducts() async{
     var url = '$baseUrl/products';
-    var headers = {'Content-Type': 'application/json'};
-    
+    var headers = {
+      'Content-Type': 'application/json',
+      'Connection': 'keep-alive',
+    };
+
     var response = await http.get(
       Uri.parse(url),
       headers: headers
@@ -19,9 +22,10 @@ class ProductService{
     print(response.body);
 
     if(response.statusCode == 200) {
-      List data = jsonDecode(response.body)['data']['data'];
+      List data = jsonDecode(response.body)['data'];
+
       List<ProductModel> products = [];
-      
+
       for(var item in data) {
         products.add(ProductModel.fromJson(item));
       }
