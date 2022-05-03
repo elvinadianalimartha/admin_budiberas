@@ -3,7 +3,6 @@ import 'package:budiberas_admin_9701/providers/category_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/cancel_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/done_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/line_text_field.dart';
-import 'package:budiberas_admin_9701/views/widgets/reusable/loading_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -123,13 +122,13 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      cancelButton(
+                      CancelButton(
                           onClick: () {
                             Navigator.pop(context);
                           }
                       ),
                       SizedBox(width: 50,),
-                      doneButton(
+                      DoneButton(
                           text: 'Hapus',
                           onClick: () {
                             handleDeleteData(categoryProvider, id);
@@ -207,7 +206,7 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        cancelButton(
+                        CancelButton(
                             onClick: () {
                               Navigator.pop(context);
                               addCategoryController.clear();
@@ -217,7 +216,7 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
                               });
                             }
                         ),
-                        doneButton(
+                        DoneButton(
                             text: 'Simpan',
                             onClick: () {
                               if(_formKey.currentState!.validate()) {
@@ -266,7 +265,7 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    editButton(
+                                    EditButton(
                                       onClick: () {
                                         status = 'Ubah';
                                         openDialogAddorEdit(
@@ -277,7 +276,7 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
                                       }
                                     ),
                                     const SizedBox(width: 20,),
-                                    deleteButton(
+                                    DeleteButton(
                                       onClick: () {
                                         areYouSureDialog(
                                           name: category.category_name,
@@ -316,7 +315,7 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
                   width: 180,
                   child: Consumer<CategoryProvider>(
                     builder: (context, data, child) {
-                      return addButton(
+                      return AddButton(
                         onClick: () {
                           status = 'Tambah';
                           openDialogAddorEdit(

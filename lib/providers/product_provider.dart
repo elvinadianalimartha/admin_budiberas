@@ -62,7 +62,7 @@ class ProductProvider with ChangeNotifier{
     required int canBeRetailed,
     List<File>? productGalleries,
   }) async {
-    //loading = true;
+    loading = true;
     try{
       if(await ProductService().createProduct(
         categoryId: categoryId,
@@ -73,14 +73,25 @@ class ProductProvider with ChangeNotifier{
         canBeRetailed: canBeRetailed,
         productGalleries: productGalleries,
       )) {
-        // loading = false;
-        // notifyListeners();
+        loading = false;
+        notifyListeners();
         return true;
       } else {
         return false;
       }
     }catch(e) {
       print(e);
+      return false;
+    }
+  }
+
+  bool checkIfUsed(String? value) {
+    var same = _products.where(
+            (element) => element.name.toLowerCase() == value?.toLowerCase()
+    );
+    if(same.isNotEmpty) {
+      return true;
+    }else {
       return false;
     }
   }

@@ -54,7 +54,7 @@ class _ProductPageState extends State<ProductPage> {
           alignment: Alignment.topRight,
           child: SizedBox(
               width: 170,
-              child: addButton(
+              child: AddButton(
                   onClick: () {
                     Navigator.pushNamed(context, '/form-add-product');
                     clearSearch();

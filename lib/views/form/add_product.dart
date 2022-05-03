@@ -16,6 +16,8 @@ import '../../theme.dart';
 import '../widgets/reusable/done_button.dart';
 import 'dart:io' show File, Platform;
 
+import '../widgets/reusable/loading_button.dart';
+
 class FormAddProduct extends StatefulWidget {
   const FormAddProduct({Key? key}) : super(key: key);
 
@@ -204,7 +206,7 @@ class _FormAddProductState extends State<FormAddProduct> {
                       'Foto',
                       style: primaryTextStyle.copyWith(fontWeight: medium),
                     ),
-                    addButton(
+                    AddButton(
                       text: 'Tambah Foto',
                       icon: Icons.add_circle_outlined,
                       onClick: () async {
@@ -296,15 +298,21 @@ class _FormAddProductState extends State<FormAddProduct> {
             ),
           ),
           const SizedBox(height: 8,),
-          TextFormFieldWidget(
-            hintText: 'Masukkan nama produk',
-            controller: productNameController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Nama produk harus diisi';
-              }
-              return null;
-            },
+          Consumer<ProductProvider>(
+            builder: (context, productProvider, child) {
+              return TextFormFieldWidget(
+                hintText: 'Masukkan nama produk',
+                controller: productNameController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Nama produk harus diisi';
+                  } else if(productProvider.checkIfUsed(value)) {
+                    return 'Nama produk sudah pernah digunakan';
+                  }
+                  return null;
+                },
+              );
+            }
           ),
         ],
       );
@@ -459,14 +467,16 @@ class _FormAddProductState extends State<FormAddProduct> {
           return SizedBox(
             height: 50,
             width: double.infinity, //supaya selebar layar
-            child: doneButton(
-              text: 'Simpan',
-              onClick: () {
-                if(_formKey.currentState!.validate()) {
-                  handleAddData(productProvider, galleryProvider);
-                }
-              },
-            ),
+            child: productProvider.loading
+                ? const LoadingButton()
+                : DoneButton(
+                    text: 'Simpan',
+                    onClick: () {
+                    if(_formKey.currentState!.validate()) {
+                      handleAddData(productProvider, galleryProvider);
+                      }
+                    },
+                  ),
           );
         }
       );
