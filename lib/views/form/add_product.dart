@@ -16,8 +16,6 @@ import '../../theme.dart';
 import '../widgets/reusable/done_button.dart';
 import 'dart:io' show File, Platform;
 
-import '../widgets/reusable/loading_button.dart';
-
 class FormAddProduct extends StatefulWidget {
   const FormAddProduct({Key? key}) : super(key: key);
 
@@ -26,7 +24,7 @@ class FormAddProduct extends StatefulWidget {
 }
 
 class _FormAddProductState extends State<FormAddProduct> {
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController productNameController = TextEditingController(text: '');
   TextEditingController sizeController = TextEditingController(text: '');
   TextEditingController priceController = TextEditingController(text: '');
@@ -378,7 +376,7 @@ class _FormAddProductState extends State<FormAddProduct> {
                     child: RadioListTile<int>(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                       value: 0,
-                      groupValue: context.read<ProductProvider>().selectedValue,
+                      groupValue: productProvider.selectedValue,
                       onChanged: (value) {
                         productProvider.changeRetailedValue(value!);
                       },
@@ -467,9 +465,10 @@ class _FormAddProductState extends State<FormAddProduct> {
           return SizedBox(
             height: 50,
             width: double.infinity, //supaya selebar layar
-            child: productProvider.loading
-                ? const LoadingButton()
-                : DoneButton(
+            child: //productProvider.loading
+                //? const LoadingButton()
+                //:
+                  DoneButton(
                     text: 'Simpan',
                     onClick: () {
                     if(_formKey.currentState!.validate()) {

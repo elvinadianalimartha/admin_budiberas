@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../models/category_model.dart';
 import '../../theme.dart';
 import '../widgets/reusable/add_button.dart';
+import '../widgets/reusable/alert_dialog.dart';
 import '../widgets/reusable/app_bar.dart';
 import '../widgets/reusable/delete_button.dart';
 import '../widgets/reusable/edit_button.dart';
@@ -96,50 +97,23 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
       return showDialog(
         context: context,
         builder: (BuildContext context) => SizedBox(
-          child: AlertDialog(
-            insetPadding: EdgeInsets.all(40),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xffffdeeb),
-                      shape: BoxShape.circle,
-                    ),
-                    padding: EdgeInsets.all(12),
-                    child: Icon(Icons.question_mark, size: 30, color: alertColor,)),
-                  SizedBox(height: 12,),
-                  Text(
-                    'Apakah Anda yakin untuk menghapus kategori $name?',
-                    style: primaryTextStyle, textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: defaultMargin,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CancelButton(
-                          onClick: () {
-                            Navigator.pop(context);
-                          }
-                      ),
-                      SizedBox(width: 50,),
-                      DoneButton(
-                          text: 'Hapus',
-                          onClick: () {
-                            handleDeleteData(categoryProvider, id);
-                          }
-                      ),
-                    ],
-                  )
-                ],
+          child: AlertDialogWidget(
+            text: 'Apakah Anda yakin untuk menghapus kategori $name?',
+            childrenList: [
+              CancelButton(
+                  onClick: () {
+                    Navigator.pop(context);
+                  }
               ),
-            ),
-          ),
+              SizedBox(width: 50,),
+              DoneButton(
+                  text: 'Hapus',
+                  onClick: () {
+                    handleDeleteData(categoryProvider, id);
+                  }
+              ),
+            ],
+          )
         ),
       );
     }

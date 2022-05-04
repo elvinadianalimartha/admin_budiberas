@@ -1,8 +1,16 @@
+import 'package:budiberas_admin_9701/providers/product_provider.dart';
+import 'package:budiberas_admin_9701/views/form/edit_data_product.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/alert_dialog.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/cancel_button.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/done_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/edit_button.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/line_text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:budiberas_admin_9701/constants.dart' as constants;
+import 'package:provider/provider.dart';
 
 import '../../models/product_model.dart';
 import '../../theme.dart';
@@ -18,6 +26,211 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String updatedStatus = '';
+
+    ProductProvider productProvider = Provider.of<ProductProvider>(context, listen: false);
+
+    handleUpdateStatus({
+      required int idToUpdate,
+      required String stockStatus,
+    }) async {
+      if(await productProvider.updateActivationProduct(id: idToUpdate, stockStatus: stockStatus)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Status produk berhasil diperbarui'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
+        );
+        productProvider.getProducts();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Status produk gagal diperbarui'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
+        );
+      }
+    }
+
+    handleDeleteData(int id) async {
+      if(await productProvider.deleteProduct(id: id)) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Data berhasil dihapus'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
+        );
+        productProvider.getProducts();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Data gagal dihapus'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
+        );
+      }
+    }
+
+    Future<void> areYouSureDialog() async {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) => SizedBox(
+            child: AlertDialogWidget(
+              text: 'Apakah Anda yakin akan menghapus produk ${product.name}?',
+              childrenList: [
+                CancelButton(
+                    onClick: () {
+                      Navigator.pop(context);
+                    }
+                ),
+                const SizedBox(width: 50,),
+                DoneButton(
+                    text: 'Hapus',
+                    onClick: () {
+                      handleDeleteData(product.id);
+                    }
+                ),
+              ],
+            )
+        ),
+      );
+    }
+
+    Future<void> modalUpdatePrice() async {
+      return showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              top: 20,
+              left: 20,
+              right: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Ubah Harga ${product.name}',
+                  style: primaryTextStyle.copyWith(
+                    fontWeight: semiBold,
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                Text(
+                  'Harga sebelumnya\t\t\t\t: \t\tRp ${formatter.format(product.price.toInt())}',
+                  style: primaryTextStyle,
+                ),
+                const SizedBox(height: 10,),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Ubah harga menjadi\t\t: ',
+                          style: primaryTextStyle,
+                        ),
+                        const SizedBox(width: 5,),
+                        Flexible(
+                          child: LineTextField(
+                              hintText: '',
+                              prefixIcon: Text(
+                                  '\t\t\t\tRp\t\t',
+                                  style: secondaryTextStyle,
+                              ),
+                              prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                              //controller: priceController,
+                              textInputType: TextInputType.number,
+                              inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Harga produk harus diisi';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 30,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 150,
+                            child: CancelButton(
+                              onClick: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                        ),
+                        SizedBox(
+                            width: 150,
+                            child: DoneButton(
+                              onClick: () {
+
+                              },
+                            )
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20,),
+              ],
+            ),
+          );
+        }
+      );
+    }
+
+    Future<void> kebabMenu() async {
+      final RenderBox renderBox = context.findRenderObject() as RenderBox;
+      Offset offset = renderBox.localToGlobal(Offset.zero);
+      int? selected = await showMenu(
+        elevation: 5,
+        context: context,
+        position: RelativeRect.fromLTRB(
+          offset.dx + 1,
+          offset.dy,
+          offset.dx,
+          offset.dy,
+        ),
+        items: [
+          product.stock != 0 ?
+          PopupMenuItem(
+            child:
+            product.stockStatus.toLowerCase() == 'aktif'
+                ? Text('Nonaktifkan Produk', style: primaryTextStyle,)
+                : Text('Aktifkan Produk', style: primaryTextStyle,),
+            value: 1,
+          )
+              : const PopupMenuItem(height: 0, child: null, value: null, enabled: false,),
+          PopupMenuItem(
+            child: Text('Ubah Harga', style: primaryTextStyle,),
+            value: 2,
+          ),
+          PopupMenuItem(
+            child: Text('Hapus', style: alertTextStyle),
+            value: 3,
+          )
+        ],
+      );
+      switch(selected) {
+        case 1:
+          if(product.stockStatus.toLowerCase() == 'aktif') {
+            updatedStatus = 'Tidak aktif';
+          } else {
+            updatedStatus = 'Aktif';
+          }
+          handleUpdateStatus(
+            idToUpdate: product.id,
+            stockStatus: updatedStatus
+          );
+          break;
+        case 2:
+          modalUpdatePrice();
+          break;
+        case 3:
+          areYouSureDialog();
+          break;
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.only(
         bottom: 20,
@@ -135,6 +348,9 @@ class ProductCard extends StatelessWidget {
                 EditButton(
                     text: 'Ubah Data',
                     onClick: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => FormEditDataProduct(product: product))
+                      );
                     }
                 ),
               ],
@@ -142,32 +358,7 @@ class ProductCard extends StatelessWidget {
             trailing: IconButton(
                icon: Icon(Icons.more_vert, color: secondaryTextColor),
                 onPressed: () {
-                  final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                  Offset offset = renderBox.localToGlobal(Offset.zero);
-                  showMenu(
-                    elevation: 5,
-                    context: context,
-                    position: RelativeRect.fromLTRB(
-                      offset.dx + 1,
-                      offset.dy,
-                      offset.dx,
-                      offset.dy,
-                    ),
-                    items: [
-                      PopupMenuItem(
-                        child: Text('Nonaktifkan Produk', style: primaryTextStyle,),
-                        value: 1,
-                      ),
-                      PopupMenuItem(
-                        child: Text('Ubah Harga', style: primaryTextStyle,),
-                        value: 2,
-                      ),
-                      PopupMenuItem(
-                        child: Text('Hapus', style: alertTextStyle),
-                        value: 3,
-                      )
-                    ],
-                  );
+                  kebabMenu();
                 },
               )
             ),

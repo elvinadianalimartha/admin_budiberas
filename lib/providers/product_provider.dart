@@ -62,7 +62,7 @@ class ProductProvider with ChangeNotifier{
     required int canBeRetailed,
     List<File>? productGalleries,
   }) async {
-    loading = true;
+    //loading = true;
     try{
       if(await ProductService().createProduct(
         categoryId: categoryId,
@@ -73,7 +73,7 @@ class ProductProvider with ChangeNotifier{
         canBeRetailed: canBeRetailed,
         productGalleries: productGalleries,
       )) {
-        loading = false;
+        //loading = false;
         notifyListeners();
         return true;
       } else {
@@ -96,40 +96,78 @@ class ProductProvider with ChangeNotifier{
     }
   }
 
-// Future<bool> updateCategory({
-//   int id = 0,
-//   String category_name = '',
-// }) async {
-//   loading = true;
-//   try{
-//     if(await CategoryService().updateCategory(id: id, category_name: category_name)) {
-//       loading = false;
-//       notifyListeners();
-//       return true;
-//     } else {
-//       return false;
-//     }
-//   }catch(e) {
-//     print(e);
-//     return false;
-//   }
-// }
-//
-// Future<bool> deleteCategory({
-//   int id = 0,
-// }) async {
-//   loading = true;
-//   try{
-//     if(await CategoryService().deleteCategory(id: id)) {
-//       loading = false;
-//       notifyListeners();
-//       return true;
-//     } else {
-//       return false;
-//     }
-//   }catch(e) {
-//     print(e);
-//     return false;
-//   }
-// }
+  Future<bool> updateProduct({
+    int id = 0,
+    int? categoryId,
+    String? productName,
+    double? size,
+    double? price,
+    String? description,
+    int? canBeRetailed,
+  }) async {
+    //loading = true;
+    try{
+      if(await ProductService().updateProduct(
+        id: id,
+        categoryId: categoryId,
+        productName: productName,
+        size: size,
+        price: price,
+        description: description,
+        canBeRetailed: canBeRetailed,
+      )){
+        //loading = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  void setDefaultCanBeRetailed(int value) {
+    selectedValue = value;
+    notifyListeners();
+  }
+
+  Future<bool> updateActivationProduct({
+    int id = 0,
+    String stockStatus = '',
+  }) async {
+    //loading = true;
+    try{
+      if(await ProductService().updateActivationProduct(
+        id: id,
+        stockStatus: stockStatus,
+      )){
+        //loading = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> deleteProduct({
+    int id = 0,
+  }) async {
+    try{
+      if(await ProductService().deleteProduct(id: id)) {
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
 }

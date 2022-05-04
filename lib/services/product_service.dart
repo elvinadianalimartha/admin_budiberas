@@ -81,4 +81,84 @@ class ProductService{
       throw Exception('Data produk gagal ditambahkan');
     }
   }
+
+  Future<bool> updateProduct({
+    int id = 0,
+    int? categoryId,
+    String? productName,
+    double? size,
+    double? price,
+    String? description,
+    int? canBeRetailed,
+  }) async {
+    var url = '$baseUrl/product/$id';
+    var headers = {'Content-Type': 'application/json'};
+    var body = jsonEncode({
+      'category_id': categoryId,
+      'product_name': productName,
+      'size': size,
+      'price': price,
+      'description': description,
+      'can_be_retailed': canBeRetailed,
+    });
+
+    var response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: body
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Data produk gagal diperbarui');
+    }
+  }
+
+  Future<bool> updateActivationProduct({
+    int id = 0,
+    String stockStatus = '',
+  }) async {
+    var url = '$baseUrl/statusProduct/$id';
+    var headers = {'Content-Type': 'application/json'};
+    var body = jsonEncode({
+      'stock_status': stockStatus,
+    });
+
+    var response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: body
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Status produk gagal diperbarui');
+    }
+  }
+
+  Future<bool> deleteProduct({
+    int id = 0,
+  }) async {
+    var url = '$baseUrl/product/$id';
+    var headers = {'Content-Type': 'application/json'};
+
+    var response = await http.delete(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Data produk gagal dihapus');
+    }
+  }
 }

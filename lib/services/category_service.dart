@@ -76,7 +76,7 @@ class CategoryService{
     if(response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Data kategori gagal ditambahkan');
+      throw Exception('Data kategori gagal diperbarui');
     }
   }
 
