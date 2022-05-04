@@ -15,20 +15,53 @@ import 'package:provider/provider.dart';
 import '../../models/product_model.dart';
 import '../../theme.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final ProductModel product;
   ProductCard({
     required this.product,
     Key? key,
 }) : super(key: key);
 
+  @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
   var formatter = NumberFormat.decimalPattern('id');
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String updatedStatus = '';
+
+  TextEditingController newPriceController = TextEditingController(text: '');
+
+  @override
+  void dispose() {
+    updatedStatus = '';
+    newPriceController.clear();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String updatedStatus = '';
-
     ProductProvider productProvider = Provider.of<ProductProvider>(context, listen: false);
+
+    handleUpdatePrice({
+      required int id,
+      required double newPrice,
+    }) async {
+      if(await productProvider.updateProductPrice(id: id, price: newPrice)) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Harga produk berhasil diperbarui'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
+        );
+        productProvider.getProducts();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Harga produk gagal diperbarui'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
+        );
+      }
+    }
 
     handleUpdateStatus({
       required int idToUpdate,
@@ -65,7 +98,7 @@ class ProductCard extends StatelessWidget {
         context: context,
         builder: (BuildContext context) => SizedBox(
             child: AlertDialogWidget(
-              text: 'Apakah Anda yakin akan menghapus produk ${product.name}?',
+              text: 'Apakah Anda yakin akan menghapus produk ${widget.product.name}?',
               childrenList: [
                 CancelButton(
                     onClick: () {
@@ -76,7 +109,7 @@ class ProductCard extends StatelessWidget {
                 DoneButton(
                     text: 'Hapus',
                     onClick: () {
-                      handleDeleteData(product.id);
+                      handleDeleteData(widget.product.id);
                     }
                 ),
               ],
@@ -105,70 +138,81 @@ class ProductCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Ubah Harga ${product.name}',
+                  'Ubah Harga ${widget.product.name}',
                   style: primaryTextStyle.copyWith(
                     fontWeight: semiBold,
                   ),
                 ),
                 const SizedBox(height: 20,),
                 Text(
-                  'Harga sebelumnya\t\t\t\t: \t\tRp ${formatter.format(product.price.toInt())}',
+                  'Harga sebelumnya\t\t\t\t: \t\tRp ${formatter.format(widget.product.price.toInt())}',
                   style: primaryTextStyle,
                 ),
                 const SizedBox(height: 10,),
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Ubah harga menjadi\t\t: ',
-                          style: primaryTextStyle,
-                        ),
-                        const SizedBox(width: 5,),
-                        Flexible(
-                          child: LineTextField(
-                              hintText: '',
-                              prefixIcon: Text(
-                                  '\t\t\t\tRp\t\t',
-                                  style: secondaryTextStyle,
-                              ),
-                              prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                              //controller: priceController,
-                              textInputType: TextInputType.number,
-                              inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Harga produk harus diisi';
-                                }
-                                return null;
-                              },
-                            ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Ubah harga menjadi\t\t: ',
+                            style: primaryTextStyle,
                           ),
-                      ],
-                    ),
-                    const SizedBox(height: 30,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                            child: CancelButton(
-                              onClick: () {
-                                Navigator.pop(context);
-                              },
-                            )
-                        ),
-                        SizedBox(
+                          const SizedBox(width: 5,),
+                          Flexible(
+                            child: LineTextField(
+                                hintText: '',
+                                prefixIcon: Text(
+                                    '\t\t\t\tRp\t\t',
+                                    style: secondaryTextStyle,
+                                ),
+                                prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                                controller: newPriceController,
+                                textInputType: TextInputType.number,
+                                inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                                actionKeyboard: TextInputAction.done,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Harga produk harus diisi';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 30,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
                             width: 150,
-                            child: DoneButton(
-                              onClick: () {
-
-                              },
-                            )
-                        ),
-                      ],
-                    )
-                  ],
+                              child: CancelButton(
+                                onClick: () {
+                                  Navigator.pop(context);
+                                  newPriceController.clear();
+                                },
+                              )
+                          ),
+                          SizedBox(
+                              width: 150,
+                              child: DoneButton(
+                                onClick: () {
+                                  if(_formKey.currentState!.validate()) {
+                                    handleUpdatePrice(
+                                        id: widget.product.id,
+                                        newPrice: double.parse(newPriceController.text)
+                                    );
+                                  }
+                                  newPriceController.clear();
+                                },
+                              )
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20,),
               ],
@@ -191,10 +235,10 @@ class ProductCard extends StatelessWidget {
           offset.dy,
         ),
         items: [
-          product.stock != 0 ?
+          widget.product.stock != 0 ?
           PopupMenuItem(
             child:
-            product.stockStatus.toLowerCase() == 'aktif'
+            widget.product.stockStatus.toLowerCase() == 'aktif'
                 ? Text('Nonaktifkan Produk', style: primaryTextStyle,)
                 : Text('Aktifkan Produk', style: primaryTextStyle,),
             value: 1,
@@ -212,13 +256,13 @@ class ProductCard extends StatelessWidget {
       );
       switch(selected) {
         case 1:
-          if(product.stockStatus.toLowerCase() == 'aktif') {
+          if(widget.product.stockStatus.toLowerCase() == 'aktif') {
             updatedStatus = 'Tidak aktif';
           } else {
             updatedStatus = 'Aktif';
           }
           handleUpdateStatus(
-            idToUpdate: product.id,
+            idToUpdate: widget.product.id,
             stockStatus: updatedStatus
           );
           break;
@@ -257,9 +301,9 @@ class ProductCard extends StatelessWidget {
                 //Photo
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: product.galleries.isNotEmpty ?
+                  child: widget.product.galleries.isNotEmpty ?
                   Image.network(
-                    constants.urlPhoto + product.galleries[0].url.toString(),
+                    constants.urlPhoto + widget.product.galleries[0].url.toString(),
                     errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                       return Icon(Icons.image, color: secondaryTextColor, size: 60,);
                     },
@@ -280,7 +324,7 @@ class ProductCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              product.name,
+                              widget.product.name,
                               style: primaryTextStyle.copyWith(
                                 fontWeight: semiBold,
                               ),
@@ -292,7 +336,7 @@ class ProductCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4,),
                       Text(
-                        'Rp ${formatter.format(product.price)}',
+                        'Rp ${formatter.format(widget.product.price)}',
                         style: priceTextStyle.copyWith(
                           fontWeight: medium,
                         ),
@@ -301,14 +345,14 @@ class ProductCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            'Stok: ${product.stock}',
+                            'Stok: ${widget.product.stock}',
                             style: secondaryTextStyle.copyWith(
                               fontWeight: medium,
                               fontSize: 13,
                             ),
                           ),
                           const SizedBox(width: 12,),
-                          product.stockStatus.toLowerCase() == 'tidak aktif' ?
+                          widget.product.stockStatus.toLowerCase() == 'tidak aktif' ?
                             Container(
                               color: const Color(0xffEBEBEB),
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -349,7 +393,7 @@ class ProductCard extends StatelessWidget {
                     text: 'Ubah Data',
                     onClick: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => FormEditDataProduct(product: product))
+                          builder: (context) => FormEditDataProduct(product: widget.product))
                       );
                     }
                 ),

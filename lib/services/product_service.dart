@@ -142,6 +142,31 @@ class ProductService{
     }
   }
 
+  Future<bool> updateProductPrice({
+    int id = 0,
+    double price = 0,
+  }) async {
+    var url = '$baseUrl/productPrice/$id';
+    var headers = {'Content-Type': 'application/json'};
+    var body = jsonEncode({
+      'price': price,
+    });
+
+    var response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: body
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Harga produk gagal diperbarui');
+    }
+  }
+
   Future<bool> deleteProduct({
     int id = 0,
   }) async {

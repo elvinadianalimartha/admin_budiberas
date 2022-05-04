@@ -155,6 +155,23 @@ class ProductProvider with ChangeNotifier{
     }
   }
 
+  Future<bool> updateProductPrice({
+    int id = 0,
+    double price = 0,
+  }) async {
+    try{
+      if(await ProductService().updateProductPrice(id: id, price: price)) {
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<bool> deleteProduct({
     int id = 0,
   }) async {

@@ -124,7 +124,22 @@ class _ProductPageState extends State<ProductPage> {
                         child: CircularProgressIndicator(),
                       )
                       :
-                      ListView.builder(
+                      data.products.isEmpty
+                      ? SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 50,),
+                            Image.asset('assets/empty-icon.png', width: MediaQuery.of(context).size.width - (10 * defaultMargin),),
+                            Text(
+                              'Mohon maaf, produk tidak ditemukan',
+                              style: primaryTextStyle.copyWith(
+                                  fontWeight: medium,
+                                  fontSize: 18),
+                            )
+                          ],
+                        ),
+                      )
+                      : ListView.builder(
                         shrinkWrap: true,
                         itemCount: data.products.length,
                         itemBuilder: (context, index) {
