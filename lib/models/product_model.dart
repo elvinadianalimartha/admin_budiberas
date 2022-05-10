@@ -19,11 +19,11 @@ class ProductModel{
 
   late String createdAt;
   late String updatedAt;
-  String? deletedAt;
+  //String? deletedAt;
 
   late List<GalleryModel> galleries;
 
-  late DateTime fixCreatedAt;
+  //late DateTime fixCreatedAt;
 
   ProductModel({
     required this.id,
@@ -66,8 +66,9 @@ class ProductModel{
 
     createdAt = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(parseCreated);
     updatedAt = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(parseUpdated);
+    //deletedAt = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(parseDeleted);
 
-    fixCreatedAt = DateTime.parse(createdAt);
+    //fixCreatedAt = DateTime.parse(createdAt);
   }
 
   Map<String, dynamic> toJson() {

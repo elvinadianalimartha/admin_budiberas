@@ -186,4 +186,44 @@ class ProductService{
       throw Exception('Data produk gagal dihapus');
     }
   }
+
+  Future<List<ProductModel>> getSuggestionProduct(String query) async{
+    var url = '$baseUrl/products';
+    var headers = {
+      'Content-Type': 'application/json',
+      'Connection': 'keep-alive',
+    };
+
+    var response = await http.get(
+        Uri.parse(url),
+        headers: headers
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      List products = jsonDecode(response.body)['data'];
+
+      //List products = [];
+
+      // products = products.where(
+      //         (element) => element.name.toLowerCase().contains(other)
+      // ).toList();
+
+      // for(var item in data) {
+      //   products.add(ProductModel.fromJson(item));
+      // }
+
+      return products.map((e) => ProductModel.fromJson(e)).where((user) {
+        final lowerName = user.name.toLowerCase();
+        final lowerQuery = query.toLowerCase();
+
+        return lowerName.contains(lowerQuery);
+      }).toList();
+
+      // return products;
+    } else {
+      throw Exception('Data produk gagal diambil!');
+    }
+  }
 }

@@ -48,7 +48,12 @@ class _ManagementPageState extends State<ManagementPage> {
                 fontWeight: medium,
               )
           ),
-          ManagementOptionCard('Stok Masuk'),
+          GestureDetector(
+            child: ManagementOptionCard('Stok Masuk'),
+            onTap: () {
+              Navigator.pushNamed(context, '/manage-incoming-stock');
+            },
+          ),
           SizedBox(height: 5,),
           ManagementOptionCard('Stok Keluar: Penjualan Offline'),
           SizedBox(height: 5,),

@@ -23,7 +23,7 @@ class ProductProvider with ChangeNotifier{
 
   void disposeValues() {
     _searchQuery = '';
-    _products = [];
+    //_products = [];
     notifyListeners();
   }
 
