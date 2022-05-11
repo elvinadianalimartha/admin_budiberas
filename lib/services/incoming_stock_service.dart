@@ -67,4 +67,49 @@ class IncomingStockService{
       throw Exception('Data stok gagal ditambahkan');
     }
   }
+
+  Future<bool> deleteIncomingStock({
+    int id = 0,
+  }) async {
+    var url = '$baseUrl/incomingStock/$id';
+    var headers = {'Content-Type': 'application/json'};
+
+    var response = await http.delete(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Data stok masuk gagal dihapus');
+    }
+  }
+
+  Future<bool> updateIncomingStock({
+    required int id,
+    required int quantity,
+  }) async {
+    var url = '$baseUrl/incomingStock/$id';
+    var headers = {'Content-Type': 'application/json'};
+    var body = jsonEncode({
+      'quantity': quantity
+    });
+
+    var response = await http.put(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Data jumlah stok masuk gagal diubah');
+    }
+  }
 }

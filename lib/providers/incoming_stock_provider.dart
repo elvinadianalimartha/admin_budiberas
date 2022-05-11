@@ -33,7 +33,7 @@ class IncomingStockProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> getIncomingStocks({String? statusParam}) async {
+  Future<void> getIncomingStocks({required String statusParam}) async {
     loading = true;
     try{
       List<IncomingStockModel> incomingStocks = await IncomingStockService().getIncomingStock(status: statusParam);
@@ -70,6 +70,39 @@ class IncomingStockProvider with ChangeNotifier{
         quantity: quantity,
         incomingStatus: incomingStatus,
       )) {
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> deleteIncomingStock({
+    required int id,
+  }) async {
+    try{
+      if(await IncomingStockService().deleteIncomingStock(id: id)) {
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateIncomingStock({
+    required int id,
+    required int quantity,
+  }) async {
+    try{
+      if(await IncomingStockService().updateIncomingStock(id: id, quantity: quantity)) {
         notifyListeners();
         return true;
       } else {

@@ -4,6 +4,7 @@ import 'package:budiberas_admin_9701/services/product_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/incoming_stocks_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -218,12 +219,16 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
                     LineTextField(
                       hintText: 'Masukkan jumlah stok masuk',
                       actionKeyboard: TextInputAction.done,
+                      textInputType: TextInputType.number,
+                      inputFormatter: [FilteringTextInputFormatter.digitsOnly],
                       controller: statusName == 'Retur dari pembeli'
                           ? returnQtyController
                           : addedQtyController,
                       validator: (value){
                         if (value!.isEmpty) {
                           return 'Jumlah harus diisi!';
+                        } else if(int.parse(value) <= 0) {
+                          return 'Jumlah harus lebih dari 0!';
                         }
                         return null;
                       },
@@ -445,7 +450,7 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
                         itemCount: data.addedIncomingStocks.length,
                         itemBuilder: (context, index) {
                           IncomingStockModel addedIncomingStocks = data.addedIncomingStocks[index];
-                          return IncomingStocksCard(incomingStocks: addedIncomingStocks);
+                          return IncomingStocksCard(incomingStocks: addedIncomingStocks, incomingProvider: data,);
                         }
                       ),
                 );
@@ -497,7 +502,8 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
                       itemBuilder: (context, index) {
                         IncomingStockModel addedIncomingStocks = data.returnIncomingStocks[index];
                         return IncomingStocksCard(
-                          incomingStocks: addedIncomingStocks
+                          incomingStocks: addedIncomingStocks,
+                          incomingProvider: data,
                         );
                       }
                   ),
