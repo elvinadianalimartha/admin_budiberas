@@ -1,6 +1,5 @@
 import 'package:budiberas_admin_9701/models/incoming_stock_model.dart';
 import 'package:budiberas_admin_9701/providers/incoming_stock_provider.dart';
-import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/services/product_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/incoming_stocks_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,12 +31,11 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
 
   TextEditingController chooseAddedProductController = TextEditingController(text: '');
   TextEditingController chooseReturnProductController = TextEditingController(text: '');
+  int addedProductId = 0;
+  int returnProductId = 0;
 
   TextEditingController addedQtyController = TextEditingController(text: '');
   TextEditingController returnQtyController = TextEditingController(text: '');
-
-  String status = '';
-  //late TabController _tabController;
 
   final List<Tab> listTab = const [
     Tab(text: 'Tambah Stok'),
@@ -60,8 +58,6 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
   //dispose ketika sudah gaada di page ini lg
   @override
   void dispose() {
-    //_tabController.dispose();
-    status = '';
     searchAddedController.dispose();
     searchReturnController.dispose();
     chooseAddedProductController.dispose();
@@ -73,7 +69,51 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    //IncomingStockProvider incomingStockProvider =  Provider.of<IncomingStockProvider>(context);
+
     print('build incoming stock page');
+
+    handleAddedData(IncomingStockProvider incomingStockProvider, String status) async {
+      if(await incomingStockProvider.createIncomingStock(
+          productId: addedProductId,
+          incomingStatus: status,
+          quantity: int.parse(addedQtyController.text),
+      )) {
+        Navigator.pop(context);
+        addedProductId = 0;
+        chooseAddedProductController.clear();
+        addedQtyController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Data stok berhasil tersimpan'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
+        );
+        incomingStockProvider.getIncomingStocks(statusParam: status);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Data gagal ditambahkan'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
+        );
+      }
+    }
+
+    handleReturnData(IncomingStockProvider incomingStockProvider, String status) async {
+      if(await incomingStockProvider.createIncomingStock(
+        productId: returnProductId,
+        incomingStatus: status,
+        quantity: int.parse(returnQtyController.text),
+      )) {
+        Navigator.pop(context);
+        returnProductId = 0;
+        chooseReturnProductController.clear();
+        returnQtyController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Data stok berhasil tersimpan'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
+        );
+        incomingStockProvider.getIncomingStocks(statusParam: status);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Data gagal ditambahkan'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
+        );
+      }
+    }
 
     Future<void> showModalAdd({required String statusName}) {
       return showModalBottomSheet(
@@ -132,9 +172,13 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
                         )
                       ),
                       onSuggestionSelected: (ProductModel suggestion) {
-                        statusName == 'Retur dari pembeli'
-                          ? chooseReturnProductController.text = suggestion.name
-                          : chooseAddedProductController.text = suggestion.name;
+                        if(statusName == 'Retur dari pembeli') {
+                          chooseReturnProductController.text = suggestion.name;
+                          returnProductId = suggestion.id;
+                        }else if(statusName == 'Tambah stok') {
+                          chooseAddedProductController.text = suggestion.name;
+                          addedProductId = suggestion.id;
+                        }
                       },
                       itemBuilder: (context, ProductModel suggestion) {
                         return ListTile(
@@ -203,16 +247,24 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
                               }
                           ),
                         ),
-                        SizedBox(
-                          width: 150,
-                          child: DoneButton(
-                              text: 'Simpan',
-                              onClick: () {
-                                if(_formKey.currentState!.validate()) {
-
-                                }
-                              }
-                          ),
+                        Consumer<IncomingStockProvider>(
+                          builder: (context, incomingStockProvider, child){
+                            return SizedBox(
+                              width: 150,
+                              child: DoneButton(
+                                  text: 'Simpan',
+                                  onClick: () {
+                                    if(_formKey.currentState!.validate()) {
+                                      if(statusName == 'Retur dari pembeli') {
+                                        handleReturnData(incomingStockProvider, statusName);
+                                      } else if(statusName == 'Tambah stok') {
+                                        handleAddedData(incomingStockProvider, statusName);
+                                      }
+                                    }
+                                  }
+                              ),
+                            );
+                          }
                         ),
                       ],
                     ),
@@ -459,7 +511,6 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
 
     Widget content() {
       return TabBarView(
-        //controller: _tabController,
         children: [
           contentAddStock(),
           contentReturn(),
@@ -480,7 +531,6 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
           appBar: customAppBar(
             text: 'Kelola Stok Masuk',
             bottom: TabBar(
-              //controller: _tabController,
                 labelColor: thirdColor,
                 unselectedLabelColor: Colors.white,
                 indicatorColor: secondaryColor,

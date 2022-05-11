@@ -352,7 +352,7 @@ class _ProductCardState extends State<ProductCard> {
                             ),
                           ),
                           const SizedBox(width: 12,),
-                          widget.product.stockStatus.toLowerCase() == 'tidak aktif' ?
+                          widget.product.stockStatus == 'Tidak aktif' ?
                             Container(
                               color: const Color(0xffEBEBEB),
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

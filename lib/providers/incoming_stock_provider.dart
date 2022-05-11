@@ -59,9 +59,25 @@ class IncomingStockProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  void disposeSearchValues() {
-    _searchAddedDate = null;
-    _searchReturnDate = null;
-    notifyListeners();
+  Future<bool> createIncomingStock({
+    required int productId,
+    required int quantity,
+    required String incomingStatus,
+  }) async {
+    try{
+      if(await IncomingStockService().createIncomingStock(
+        productId: productId,
+        quantity: quantity,
+        incomingStatus: incomingStatus,
+      )) {
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
   }
 }

@@ -39,4 +39,32 @@ class IncomingStockService{
       throw Exception('Data stok masuk gagal diambil!');
     }
   }
+
+  Future<bool> createIncomingStock({
+    int productId = 0,
+    int quantity = 0,
+    String incomingStatus = '',
+  }) async {
+    var url = '$baseUrl/incomingStock';
+    var headers = {'Content-Type': 'application/json'};
+    var body = jsonEncode({
+      'product_id': productId,
+      'quantity': quantity,
+      'incoming_status': incomingStatus,
+    });
+
+    var response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: body
+    );
+
+    print(response.body);
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Data stok gagal ditambahkan');
+    }
+  }
 }

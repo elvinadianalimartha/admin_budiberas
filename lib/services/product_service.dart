@@ -204,16 +204,6 @@ class ProductService{
     if(response.statusCode == 200) {
       List products = jsonDecode(response.body)['data'];
 
-      //List products = [];
-
-      // products = products.where(
-      //         (element) => element.name.toLowerCase().contains(other)
-      // ).toList();
-
-      // for(var item in data) {
-      //   products.add(ProductModel.fromJson(item));
-      // }
-
       return products.map((e) => ProductModel.fromJson(e)).where((user) {
         final lowerName = user.name.toLowerCase();
         final lowerQuery = query.toLowerCase();
