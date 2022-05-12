@@ -346,19 +346,25 @@ class _ProductCardState extends State<ProductCard> {
                         children: [
                           Text(
                             'Stok: ${widget.product.stock}',
-                            style: secondaryTextStyle.copyWith(
-                              fontWeight: medium,
-                              fontSize: 13,
-                            ),
+                            style: widget.product.stock == 0
+                              ? alertTextStyle.copyWith(
+                                fontWeight: medium,
+                              )
+                              : secondaryTextStyle.copyWith(
+                                fontWeight: medium,
+                              )
                           ),
                           const SizedBox(width: 12,),
                           widget.product.stockStatus == 'Tidak aktif' ?
                             Container(
-                              color: const Color(0xffEBEBEB),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: const Color(0xfff8e3e3),
+                              ),
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               child: Text(
                                 'Tidak aktif',
-                                style: secondaryTextStyle.copyWith(
+                                style: alertTextStyle.copyWith(
                                   fontWeight: medium,
                                   fontSize: 12,
                                 ),
