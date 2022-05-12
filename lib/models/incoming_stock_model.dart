@@ -1,9 +1,7 @@
-import 'package:budiberas_admin_9701/models/product_model.dart';
-import 'package:flutter/material.dart';
-
 class IncomingStockModel{
   late int id;
   late String product;
+  String? isDeletedProduct;
   late DateTime incomingDate;
   late String incomingTime;
   late int quantity;
@@ -12,6 +10,7 @@ class IncomingStockModel{
   IncomingStockModel({
     required this.id,
     required this.product,
+    this.isDeletedProduct,
     required this.incomingDate,
     required this.incomingTime,
     required this.quantity,
@@ -21,6 +20,7 @@ class IncomingStockModel{
   IncomingStockModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     product = json['product']['product_name'];
+    isDeletedProduct = json['product']['deleted_at'];
     incomingDate = DateTime.tryParse(json['incoming_date'])!;
     incomingTime = json['incoming_time'];
     quantity = json['quantity'];

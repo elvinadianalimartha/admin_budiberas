@@ -302,30 +302,32 @@ class IncomingStocksCard extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            contentPadding: const EdgeInsets.only(
-              right: 16,
-              left: 16,
-              bottom: 16,
-            ),
-            title: Row(
-              children: [
-                EditButton(
-                    text: 'Ubah',
-                    iconSize: 15,
+          incomingStocks.isDeletedProduct == null
+            ? ListTile(
+              contentPadding: const EdgeInsets.only(
+                right: 16,
+                left: 16,
+                bottom: 16,
+              ),
+              title: Row(
+                children: [
+                  EditButton(
+                      text: 'Ubah',
+                      iconSize: 15,
+                      onClick: () {
+                        showModalUpdateStock();
+                      }
+                  ),
+                  const SizedBox(width: 20,),
+                  DeleteButton(
                     onClick: () {
-                      showModalUpdateStock();
+                      areYouSureDialog();
                     }
-                ),
-                const SizedBox(width: 20,),
-                DeleteButton(
-                  onClick: () {
-                    areYouSureDialog();
-                  }
-                ),
-              ],
-            ),
-          ),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox(height: 6,),
         ],
       ),
     );
