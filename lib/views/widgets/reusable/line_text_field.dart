@@ -17,6 +17,7 @@ class LineTextField extends StatefulWidget {
   final TextEditingController? controller;
   final TextInputAction? actionKeyboard; //done, search, next, etc.
   final FormFieldValidator<String>? validator;
+  final bool readOnly;
 
   const LineTextField({
     Key? key,
@@ -32,6 +33,7 @@ class LineTextField extends StatefulWidget {
     this.controller,
     this.actionKeyboard = TextInputAction.next,
     this.validator,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -59,6 +61,7 @@ class _LineTextFieldState extends State<LineTextField> {
       controller: widget.controller,
       validator: widget.validator,
       maxLines: null,
+      readOnly: widget.readOnly,
     );
   }
 }

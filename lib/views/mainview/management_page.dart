@@ -57,7 +57,12 @@ class _ManagementPageState extends State<ManagementPage> {
           SizedBox(height: 5,),
           ManagementOptionCard('Stok Keluar: Penjualan Offline'),
           SizedBox(height: 5,),
-          ManagementOptionCard('Stok Keluar: Retur ke Supplier'),
+          GestureDetector(
+            child: ManagementOptionCard('Stok Keluar: Retur ke Supplier'),
+            onTap: () {
+              Navigator.pushNamed(context, '/manage-return-to-supplier');
+            },
+          ),
           SizedBox(height: 5,),
           ManagementOptionCard('Pengalihan Stok'),
 

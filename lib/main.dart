@@ -2,6 +2,7 @@
 import 'package:budiberas_admin_9701/providers/category_provider.dart';
 import 'package:budiberas_admin_9701/providers/gallery_provider.dart';
 import 'package:budiberas_admin_9701/providers/incoming_stock_provider.dart';
+import 'package:budiberas_admin_9701/providers/out_stock_provider.dart';
 import 'package:budiberas_admin_9701/providers/page_provider.dart';
 import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/theme.dart';
@@ -10,6 +11,7 @@ import 'package:budiberas_admin_9701/views/mainview/main_page.dart';
 import 'package:budiberas_admin_9701/views/management/category_page.dart';
 import 'package:budiberas_admin_9701/views/management/incoming_stock_page.dart';
 import 'package:budiberas_admin_9701/views/management/product_page.dart';
+import 'package:budiberas_admin_9701/views/management/return_to_supplier_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +31,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CategoryProvider(),),
         ChangeNotifierProvider(create: (context) => ProductProvider(),),
         ChangeNotifierProvider(create: (context) => GalleryProvider(),),
-        ChangeNotifierProvider(create: (context) => IncomingStockProvider()),
+        ChangeNotifierProvider(create: (context) => IncomingStockProvider(),),
+        ChangeNotifierProvider(create: (context) => OutStockProvider(),),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -48,7 +51,7 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: const [
           Locale('en', ''), // English, no country code
-          Locale('id', ''), // Spanish, no country code
+          Locale('id', ''), // Indonesia, no country code
         ],
         routes: {
           '/': (context) => MainPage(),
@@ -56,6 +59,7 @@ class MyApp extends StatelessWidget {
           '/manage-product': (context) => ProductPage(),
           '/form-add-product': (context) => FormAddProduct(),
           '/manage-incoming-stock': (context) => IncomingStock(),
+          '/manage-return-to-supplier': (context) => ReturnToSupplierPage(),
         },
       ),
     );
