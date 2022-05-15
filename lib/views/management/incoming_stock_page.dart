@@ -1,6 +1,6 @@
 import 'package:budiberas_admin_9701/models/incoming_stock_model.dart';
 import 'package:budiberas_admin_9701/providers/incoming_stock_provider.dart';
-import 'package:budiberas_admin_9701/services/product_service.dart';
+import 'package:budiberas_admin_9701/services/suggestion_product_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/incoming_stocks_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class IncomingStock extends StatefulWidget {
   _IncomingStockState createState() => _IncomingStockState();
 }
 
-class _IncomingStockState extends State<IncomingStock> with SingleTickerProviderStateMixin{
+class _IncomingStockState extends State<IncomingStock> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController searchAddedController = TextEditingController(text: '');
   TextEditingController searchReturnController = TextEditingController(text: '');
@@ -187,7 +187,7 @@ class _IncomingStockState extends State<IncomingStock> with SingleTickerProvider
                         );
                       },
                       suggestionsCallback: (pattern) {
-                        return ProductService().getSuggestionProduct(pattern);
+                        return SuggestionProductService().getSuggestionProduct(pattern);
                       },
                       errorBuilder: (context, error) => SizedBox(
                         height: 50,
