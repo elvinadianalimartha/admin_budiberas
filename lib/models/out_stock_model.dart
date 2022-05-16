@@ -1,6 +1,7 @@
 class OutStockModel{
   late int id;
-  late String product;
+  late String productName;
+  late int productStock;
   String? isDeletedProduct;
   late DateTime outDate;
   late String outTime;
@@ -9,7 +10,8 @@ class OutStockModel{
 
   OutStockModel({
     required this.id,
-    required this.product,
+    required this.productName,
+    required this.productStock,
     this.isDeletedProduct,
     required this.outDate,
     required this.outTime,
@@ -19,7 +21,8 @@ class OutStockModel{
 
   OutStockModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    product = json['product']['product_name'];
+    productName = json['product']['product_name'];
+    productStock = json['product']['stock'];
     isDeletedProduct = json['product']['deleted_at'];
     outDate = DateTime.tryParse(json['out_date'])!;
     outTime = json['out_time'];

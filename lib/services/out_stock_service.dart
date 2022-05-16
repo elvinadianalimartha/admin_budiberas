@@ -36,6 +36,20 @@ class OutStockService {
     }
   }
 
+  Future<int> getMaxOutQty(int id) async {
+    var url = '${constants.baseUrl}/maxOutQty/$id';
+    var headers = {'Content-Type': 'application/json'};
+
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    print(response.body);
+
+    return int.parse(response.body);
+  }
+
   Future<bool> createOutStock({
     int productId = 0,
     int quantity = 0,

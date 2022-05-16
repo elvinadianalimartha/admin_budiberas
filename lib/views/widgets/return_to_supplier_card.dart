@@ -1,4 +1,5 @@
 import 'package:budiberas_admin_9701/models/out_stock_model.dart';
+import 'package:budiberas_admin_9701/services/out_stock_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/alert_dialog.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/cancel_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/delete_button.dart';
@@ -45,7 +46,9 @@ class ReturnToSupplierCard extends StatelessWidget {
       }
     }
 
-    Future<void> showModalUpdateStock() {
+    Future<void> showModalUpdateStock() async {
+      int maxOutQty = await OutStockService().getMaxOutQty(outStocks.id);
+
       return showModalBottomSheet(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -71,20 +74,21 @@ class ReturnToSupplierCard extends StatelessWidget {
               ),
               const SizedBox(height: 8,),
               Text(
-                'Produk\t\t\t\t: ${outStocks.product}',
-                style: secondaryTextStyle.copyWith(
+                'Produk\t\t\t\t: ${outStocks.productName}',
+                style: greyTextStyle.copyWith(
                   fontWeight: medium,
                 ),
               ),
               const SizedBox(height: 4,),
               Text(
                 'Waktu keluar\t: $formattedDate | ${outStocks.outTime}',
-                style: secondaryTextStyle.copyWith(
+                style: greyTextStyle.copyWith(
                   fontWeight: medium,
                 ),
               ),
+              const SizedBox(height: 8,),
               const Divider(thickness: 1,),
-              const SizedBox(height: 10,),
+              const SizedBox(height: 8,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -98,44 +102,54 @@ class ReturnToSupplierCard extends StatelessWidget {
                   Flexible(
                       child: Text(
                         '${outStocks.quantity}',
-                        style: primaryTextStyle,
+                        style: greyTextStyle,
                       )
                   )
                 ],
               ),
-              const SizedBox(height: 8,),
+              const SizedBox(height: 12,),
               Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ubah jumlah menjadi :',
-                          style: greyTextStyle.copyWith(
-                            fontWeight: medium,
-                          ),
-                        ),
-                        const SizedBox(width: 10,),
-                        Flexible(
-                          child: LineTextField(
-                            hintText: '',
-                            actionKeyboard: TextInputAction.done,
-                            textInputType: TextInputType.number,
-                            inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-                            controller: editQtyController,
-                            validator: (value){
-                              if (value!.isEmpty) {
-                                return 'Jumlah harus diisi!';
-                              } else if(int.parse(value) <= 0) {
-                                return 'Jumlah harus lebih dari 0!';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
+                    Text(
+                      'Ubah jumlah :',
+                      style: greyTextStyle.copyWith(
+                        fontWeight: medium,
+                      ),
+                    ),
+                    Text(
+                        '(Maksimal $maxOutQty)',
+                        style: priceTextStyle
+                    ),
+                    LineTextField(
+                      hintText: '',
+                      actionKeyboard: TextInputAction.done,
+                      textInputType: TextInputType.number,
+                      inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                      controller: editQtyController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Jumlah harus diisi!';
+                        } else if(int.parse(value) <= 0) {
+                          return 'Jumlah harus lebih dari 0!';
+                        }
+
+                        switch(outStocks.productStock < 1) {
+                          case true:
+                            if(int.parse(value) > outStocks.quantity) {
+                              return 'Jumlah retur tidak bisa melebihi ${outStocks.quantity}';
+                            }
+                            break;
+                          case false:
+                            if(int.parse(value) > maxOutQty) {
+                              return 'Jumlah retur tidak bisa melebihi $maxOutQty';
+                            }
+                            break;
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 36,),
                     Row(
@@ -194,7 +208,7 @@ class ReturnToSupplierCard extends StatelessWidget {
             child: AlertDialogWidget(
               text: 'Apakah Anda yakin akan menghapus stok keluar '
                   'sebanyak ${outStocks.quantity} '
-                  'dari produk ${outStocks.product}?',
+                  'dari produk ${outStocks.productName}?',
               childrenList: [
                 CancelButton(
                     onClick: () {
@@ -250,7 +264,7 @@ class ReturnToSupplierCard extends StatelessWidget {
                     const SizedBox(width: 8,),
                     Flexible(
                       child: Text(
-                        outStocks.product,
+                        outStocks.productName,
                         style: primaryTextStyle,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
