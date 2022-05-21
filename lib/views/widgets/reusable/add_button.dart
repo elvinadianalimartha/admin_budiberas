@@ -27,6 +27,8 @@ class AddButton extends StatelessWidget {
         padding: const EdgeInsets.all(8),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: btnManageColor,),
           const SizedBox(width: 11,),

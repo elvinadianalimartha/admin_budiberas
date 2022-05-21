@@ -1,5 +1,6 @@
 import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/views/form/edit_data_product.dart';
+import 'package:budiberas_admin_9701/views/form/edit_photo_product.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/alert_dialog.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/cancel_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/done_button.dart';
@@ -305,7 +306,7 @@ class _ProductCardState extends State<ProductCard> {
                   Image.network(
                     constants.urlPhoto + widget.product.galleries[0].url.toString(),
                     errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                      return Icon(Icons.image, color: secondaryTextColor, size: 60,);
+                      return Icon(Icons.image_not_supported_rounded, color: secondaryTextColor, size: 60,);
                     },
                     width: 60,
                     height: 60,
@@ -392,6 +393,9 @@ class _ProductCardState extends State<ProductCard> {
                   icon: Icons.camera_alt,
                   iconSize: 15,
                   onClick: () {
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => FormEditPhotoProduct(productId: widget.product.id, productName: widget.product.name))
+                    );
                   }
                 ),
                 const SizedBox(width: 20,),

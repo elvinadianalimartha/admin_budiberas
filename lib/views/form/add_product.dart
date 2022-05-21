@@ -2,6 +2,7 @@ import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/add_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/app_bar.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/text_field.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,7 +43,7 @@ class _FormAddProductState extends State<FormAddProduct> {
 
   getInit() async {
     await Provider.of<CategoryProvider>(context, listen: false).getCategories();
-    Provider.of<GalleryProvider>(context, listen: false).galleries;
+    Provider.of<GalleryProvider>(context, listen: false).galleriesTemp;
     Provider.of<ProductProvider>(context, listen: false).products;
   }
 
@@ -59,7 +60,7 @@ class _FormAddProductState extends State<FormAddProduct> {
     }
 
     handleAddData(ProductProvider productProvider, GalleryProvider galleryProvider) async {
-      var photoUrl = galleryProvider.galleries.map(
+      var photoUrl = galleryProvider.galleriesTemp.map(
               (e) => File(e.url!)
       ).toList();
       print(photoUrl);
@@ -76,7 +77,7 @@ class _FormAddProductState extends State<FormAddProduct> {
 
         //Reset to starting condition
         resetForm();
-        galleryProvider.galleries.clear();
+        galleryProvider.galleriesTemp.clear();
         productProvider.selectedValue = 1;
 
         //Go to manage product page with newly created product
@@ -141,7 +142,12 @@ class _FormAddProductState extends State<FormAddProduct> {
 
     Future getPicture(ImageSource source, GalleryProvider galleryProvider) async {
       try{
-        final imgPicked = await ImagePicker().pickImage(source: source);
+        final imgPicked = await ImagePicker().pickImage(
+          source: source,
+          imageQuality: 85,
+          maxWidth: 540,
+          maxHeight: 960,
+        );
         if(imgPicked == null) return;
 
         galleryProvider.addPhotoTemp(imgPicked.path);
@@ -160,12 +166,12 @@ class _FormAddProductState extends State<FormAddProduct> {
                 separatorBuilder: (BuildContext context, int index) {
                   return const SizedBox(width: 8,);
                 },
-                itemCount: galleryProvider.galleries.length,
+                itemCount: galleryProvider.galleriesTemp.length,
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  GalleryModel image = galleryProvider.galleries[index];
+                  GalleryModel image = galleryProvider.galleriesTemp[index];
                   return Stack(
                     children: [
                       image.url != null
@@ -217,7 +223,7 @@ class _FormAddProductState extends State<FormAddProduct> {
                   ],
                 ),
                 const SizedBox(height: 12,),
-                galleryProvider.galleries.isEmpty
+                galleryProvider.galleriesTemp.isEmpty
                     ? const SizedBox()
                     : samplePhoto(),
               ],
@@ -241,7 +247,7 @@ class _FormAddProductState extends State<FormAddProduct> {
           Consumer<CategoryProvider>(
             builder: (context, data, child) {
               List<CategoryModel> listCategories = data.categories;
-              return DropdownButtonFormField(
+              return DropdownButtonFormField2(
                   validator: (value) {
                     if (value == null) {
                       return 'Kategori produk harus dipilih';
@@ -512,7 +518,7 @@ class _FormAddProductState extends State<FormAddProduct> {
 
     return WillPopScope(
       onWillPop: () {
-        context.read<GalleryProvider>().galleries.clear();
+        context.read<GalleryProvider>().galleriesTemp.clear();
         Navigator.pop(context);
         return Future.value(false);
       },
