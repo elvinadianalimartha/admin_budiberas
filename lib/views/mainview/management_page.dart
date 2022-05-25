@@ -64,7 +64,12 @@ class _ManagementPageState extends State<ManagementPage> {
             },
           ),
           SizedBox(height: 5,),
-          ManagementOptionCard('Pengalihan Stok'),
+          GestureDetector(
+            child: ManagementOptionCard('Pengalihan Stok'),
+            onTap: (){
+                Navigator.pushNamed(context, '/manage-shifting-stock');
+            },
+          ),
 
           SizedBox(height: 30,),
 
