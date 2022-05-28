@@ -20,17 +20,25 @@ class FormShiftingStock extends StatefulWidget {
 }
 
 class _FormShiftingStockState extends State<FormShiftingStock> {
-  final _formKey = GlobalKey<FormState>();
+  List<GlobalKey<FormState>> formKeys = [
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+  ];
   TextEditingController sourceProductController = TextEditingController(text: '');
   TextEditingController shiftQtyController = TextEditingController(text: '');
   TextEditingController destinationProductController = TextEditingController(text: '');
   int? sourceProdId;
   int? destProdId;
-  int maxShiftQty = 0;
+
+  late ShiftingStockProvider shiftingStockProvider;
 
   @override
   void initState() {
-    //getInit();
+    shiftingStockProvider = Provider.of<ShiftingStockProvider>(context, listen: false);
+
+    //saat pertama kali buka page form shifting stock, app akan load source product suggestions dari API
+    Provider.of<ShiftingStockProvider>(context, listen: false).getSourceProductSuggestions('');
     super.initState();
   }
 
@@ -38,13 +46,10 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
   void dispose() {
     sourceProductController.clear();
     shiftQtyController.clear();
-    maxShiftQty = 0;
+    destinationProductController.clear();
+    shiftingStockProvider.disposeValue();
     super.dispose();
   }
-
-  // void getInit(){
-  //   Provider.of<ShiftingStockProvider>(context, listen: false);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,67 +65,83 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
             ),
           ),
           const SizedBox(height: 8,),
-          Consumer<ShiftingStockProvider>(
-            builder: (context, data, child){
-              return TypeAheadFormField<ProductModel>(
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Produk asal harus diisi!';
-                    }
-                    return null;
-                  },
-                  hideSuggestionsOnKeyboardHide: false,
-                  debounceDuration: const Duration(milliseconds: 500),
-                  textFieldConfiguration: TextFieldConfiguration(
-                      style: primaryTextStyle,
-                      controller: sourceProductController,
-                      decoration: InputDecoration(
-                        isCollapsed: true,
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
+          Form(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            key: formKeys[0],
+            child: Consumer<ShiftingStockProvider>(
+              builder: (context, data, child){
+                return TypeAheadFormField<ProductModel> (
+                    suggestionsCallback: (pattern) async{
+                      return await SuggestionProductService().getCanBeRetailedProduct(pattern);
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Produk asal harus diisi';
+                      } else if (data.validateSourceProduct(value) == false) {
+                        return 'Mohon pilih nama produk yang ada di daftar';
+                      }
+                      return null;
+                    },
+                    hideSuggestionsOnKeyboardHide: false,
+                    debounceDuration: const Duration(milliseconds: 500),
+                    textFieldConfiguration: TextFieldConfiguration(
+                        style: primaryTextStyle,
+                        controller: sourceProductController,
+                        decoration: InputDecoration(
+                          isCollapsed: true,
+                          isDense: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          contentPadding: const EdgeInsets.all(16),
+                          fillColor: formColor,
+                          hintText: 'Pilih/cari produk asal',
+                          hintStyle: secondaryTextStyle,
                         ),
-                        filled: true,
-                        contentPadding: const EdgeInsets.all(16),
-                        fillColor: formColor,
-                        hintText: 'Pilih/cari produk asal',
-                        hintStyle: secondaryTextStyle,
-                      )
-                  ),
-                  onSuggestionSelected: (ProductModel suggestion) {
-                    sourceProductController.text = suggestion.name;
-                    sourceProdId = suggestion.id;
-                    data.setMaxShiftQty(suggestion.stock);
-                  },
-                  itemBuilder: (context, ProductModel suggestion) {
-                    return ListTile(
-                      title: Text(suggestion.name, style: primaryTextStyle,),
-                    );
-                  },
-                  suggestionsCallback: (pattern) {
-                    return SuggestionProductService().getCanBeRetailedProduct(pattern);
-                  },
-                  errorBuilder: (context, error) => SizedBox(
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        'Terjadi kesalahan, mohon ulangi pencarian',
-                        style: alertTextStyle,
+                        onEditingComplete: (){
+                          formKeys[0].currentState!.validate()
+                            ? data.sourceIsSet() //NOTE: product source akan diset true kalau sudah lolos validasi
+                            : [data.sourceIsNotSet(),
+                              sourceProdId = null,
+                              shiftQtyController.clear(),
+                              destinationProductController.clear(),
+                              FocusScope.of(context).unfocus(),];
+                        }
+                    ),
+                    onSuggestionSelected: (ProductModel suggestion) {
+                      sourceProductController.text = suggestion.name;
+                      sourceProdId = suggestion.id;
+                      data.getDestProductSuggestions('',sourceProdId!);
+                      data.setMaxShiftQty(suggestion.stock);
+                    },
+                    itemBuilder: (context, ProductModel suggestion) {
+                      return ListTile(
+                        title: Text(suggestion.name, style: primaryTextStyle,),
+                      );
+                    },
+                    errorBuilder: (context, error) => SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          'Terjadi kesalahan, mohon ulangi pencarian',
+                          style: alertTextStyle,
+                        ),
                       ),
                     ),
-                  ),
-                  noItemsFoundBuilder: (context) => SizedBox(
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        'Produk tidak ditemukan',
-                        style: greyTextStyle,
+                    noItemsFoundBuilder: (context) => SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          'Produk tidak ditemukan',
+                          style: greyTextStyle,
+                        ),
                       ),
-                    ),
-                  )
-              );
-            }
+                    )
+                );
+              }
+            ),
           ),
         ],
       );
@@ -138,43 +159,130 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
             ),
           ),
           Consumer<ShiftingStockProvider>(
-              builder: (context, data, child) {
-                return Text(
-                  'Maksimal ${data.maxQty} buah',
-                  style: priceTextStyle.copyWith(
+            builder: (context, data, child) {
+              return data.isSourceProductSet == true
+                ? Text(
+                    'Maksimal ${data.maxQty} buah',
+                    style: priceTextStyle.copyWith(
+                      fontSize: 12,
+                    ),
+                  )
+                : Text(
+                    'Mohon isi produk asal dengan benar terlebih dulu',
+                    style: secondaryTextStyle.copyWith(
                       fontSize: 12
-                  ),
+                    ),
+                  );
+            }
+          ),
+          const SizedBox(height: 8,),
+          Form(
+            key: formKeys[1],
+            child: Consumer<ShiftingStockProvider>(
+              builder: (context, data, child){
+                return TextFormFieldWidget(
+                  hintText: 'Masukkan jumlah yang mau dialihkan',
+                  controller: shiftQtyController,
+                  textInputType: TextInputType.number,
+                  actionKeyboard: TextInputAction.done,
+                  inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                  readOnly: data.isSourceProductSet ? false : true, //kalau set source product salah, maka readOnlynya true
+                  validator: (value) {
+                    if(data.isSourceProductSet) {
+                      if (value!.isEmpty) {
+                        return 'Jumlah pengalihan harus diisi';
+                      } else if(int.parse(value) > data.maxQty!) {
+                        return 'Jumlah pengalihan maksimal ${data.maxQty} buah!';
+                      } else if(int.parse(value) < 1) {
+                        return 'Jumlah pengalihan harus lebih dari 0 buah';
+                      }
+                      return null;
+                    }
+                    return null;
+                  },
                 );
               }
-          ),
-          // sourceProductController.text.isEmpty
-          // ? const SizedBox()
-          // : Consumer<ShiftingStockProvider>(
-          //     builder: (context, data, child) {
-          //       return Text(
-          //         'Maksimal ${data.maxQty} buah',
-          //         style: priceTextStyle.copyWith(
-          //           fontSize: 12
-          //         ),
-          //       );
-          //     }
-          //   ),
-          const SizedBox(height: 8,),
-          TextFormFieldWidget(
-            hintText: 'Masukkan jumlah yang mau dialihkan',
-            controller: shiftQtyController,
-            textInputType: TextInputType.number,
-            inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Jumlah pengalihan harus diisi';
-              } else if(int.parse(value) > maxShiftQty) {
-                return 'Jumlah pengalihan maksimal $maxShiftQty!';
-              }
-              return null;
-            },
+            ),
           ),
         ],
+      );
+    }
+
+    Widget formDestProduct() {
+      return Form(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        key: formKeys[2],
+        child: Consumer<ShiftingStockProvider>(
+            builder: (context, data, child){
+              return TypeAheadFormField<ProductModel>(
+                suggestionsCallback: (pattern) {
+                  return SuggestionProductService().getDestinationProduct(
+                    query: pattern,
+                    sourceProductId: sourceProdId!,
+                  );
+                },
+                validator: (value) {
+                  if(data.isSourceProductSet) {
+                    if (value!.isEmpty) {
+                      return 'Produk tujuan harus diisi';
+                    } else if(data.validateDestProduct(value) == false) {
+                      return 'Mohon pilih nama produk yang ada di daftar';
+                    }
+                    return null;
+                  }
+                  return null;
+                },
+                hideSuggestionsOnKeyboardHide: false,
+                debounceDuration: const Duration(milliseconds: 500),
+                textFieldConfiguration: TextFieldConfiguration(
+                    style: primaryTextStyle,
+                    controller: destinationProductController,
+                    decoration: InputDecoration(
+                      isCollapsed: true,
+                      isDense: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(16),
+                      fillColor: formColor,
+                      hintText: 'Pilih/cari produk tujuan pengalihan',
+                      hintStyle: secondaryTextStyle,
+                    )
+                ),
+                onSuggestionSelected: (ProductModel suggestion) {
+                  destinationProductController.text = suggestion.name;
+                  destProdId = suggestion.id;
+                },
+                itemBuilder: (context, ProductModel suggestion) {
+                  return ListTile(
+                    title: Text(suggestion.name, style: primaryTextStyle,),
+                  );
+                },
+                errorBuilder: (context, error) => SizedBox(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      sourceProductController.text == '' || data.isSourceProductSet == false
+                          ? 'Mohon isi produk asal dgn benar terlebih dulu'
+                          : 'Terjadi kesalahan, mohon ulangi pencarian',
+                      style: alertTextStyle,
+                    ),
+                  ),
+                ),
+                noItemsFoundBuilder: (context) => SizedBox(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      'Produk tidak ditemukan',
+                      style: greyTextStyle,
+                    ),
+                  ),
+                )
+            );
+          }
+        ),
       );
     }
 
@@ -184,71 +292,40 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nama produk asal',
+            'Nama produk tujuan',
             style: primaryTextStyle.copyWith(
               fontWeight: medium,
             ),
           ),
-          const SizedBox(height: 8,),
-          TypeAheadFormField<ProductModel>(
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Produk tujuan harus diisi!';
-                }
-                return null;
-              },
-              hideSuggestionsOnKeyboardHide: false,
-              debounceDuration: const Duration(milliseconds: 500),
-              textFieldConfiguration: TextFieldConfiguration(
-                  style: primaryTextStyle,
-                  controller: destinationProductController,
-                  decoration: InputDecoration(
-                    isCollapsed: true,
-                    isDense: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+          Consumer<ShiftingStockProvider>(
+            builder: (context, data, child) {
+              if(data.isSourceProductSet == true) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8,),
+                    formDestProduct(),
+                  ],
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Mohon isi produk asal dengan benar terlebih dulu',
+                      style: secondaryTextStyle.copyWith(
+                        fontSize: 12
+                      ),
                     ),
-                    filled: true,
-                    contentPadding: const EdgeInsets.all(16),
-                    fillColor: formColor,
-                    hintText: 'Pilih/cari produk tujuan pengalihan',
-                    hintStyle: secondaryTextStyle,
-                  )
-              ),
-              onSuggestionSelected: (ProductModel suggestion) {
-                destinationProductController.text = suggestion.name;
-                destProdId = suggestion.id;
-              },
-              itemBuilder: (context, ProductModel suggestion) {
-                return ListTile(
-                  title: Text(suggestion.name, style: primaryTextStyle,),
+                    const SizedBox(height: 8,),
+                    const TextFormFieldWidget(
+                      hintText: 'Pilih/cari produk tujuan pengalihan',
+                      readOnly: true,
+                    )
+                  ],
                 );
-              },
-              suggestionsCallback: (pattern) {
-                return SuggestionProductService().getDestinationProduct(
-                  query: pattern,
-                  sourceProductId: sourceProdId!,
-                );
-              },
-              errorBuilder: (context, error) => SizedBox(
-                height: 50,
-                child: Center(
-                  child: Text(
-                    'Terjadi kesalahan, mohon ulangi pencarian',
-                    style: alertTextStyle,
-                  ),
-                ),
-              ),
-              noItemsFoundBuilder: (context) => SizedBox(
-                height: 50,
-                child: Center(
-                  child: Text(
-                    'Produk tidak ditemukan',
-                    style: greyTextStyle,
-                  ),
-                ),
-              )
+              }
+            }
           ),
         ],
       );
@@ -265,17 +342,30 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
             shiftQty(),
             const SizedBox(height: 20,),
             destinationProduct(),
-            const SizedBox(height: 36,),
+            const SizedBox(height: 50,),
             SizedBox(
               width: double.infinity,
-              child: DoneButton(
-                onClick: () {
-
-                },
+              child: Consumer<ShiftingStockProvider>(
+                builder: (context, data, child){
+                  return DoneButton(
+                    onClick: () {
+                      bool allIsValidated = formKeys.every((key) => key.currentState!.validate());
+                      if(allIsValidated){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Data berhasil ditambahkan'),
+                            backgroundColor: secondaryColor,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                }
               ),
             ),
           ],
-        ),
+        )
       );
     }
 
