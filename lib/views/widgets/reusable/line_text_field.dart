@@ -44,6 +44,7 @@ class _LineTextFieldState extends State<LineTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       keyboardType: widget.textInputType,
       inputFormatters: widget.inputFormatter,
       textInputAction: widget.actionKeyboard,

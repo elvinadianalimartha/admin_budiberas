@@ -18,6 +18,7 @@ class TextFormFieldWidget extends StatefulWidget {
   final TextInputAction? actionKeyboard; //done, search, next, etc.
   final FormFieldValidator<String>? validator;
   final bool readOnly;
+  final void Function(String text)? onChanged;
 
   const TextFormFieldWidget({
     Key? key,
@@ -34,6 +35,7 @@ class TextFormFieldWidget extends StatefulWidget {
     this.actionKeyboard = TextInputAction.next,
     this.validator,
     this.readOnly = false,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,8 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      onChanged: widget.onChanged,
       readOnly: widget.readOnly,
       keyboardType: widget.textInputType,
       inputFormatters: widget.inputFormatter,
