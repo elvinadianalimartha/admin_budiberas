@@ -118,7 +118,7 @@ class _ShiftingStockPageState extends State<ShiftingStockPage> {
                         itemCount: data.shiftStocks.length,
                         itemBuilder: (context, index) {
                           ShiftStockModel shiftStocks = data.shiftStocks[index];
-                          return ShiftStockCard(shiftStocks: shiftStocks,);
+                          return ShiftStockCard(shiftStocks: shiftStocks, shiftingStockProvider: data,);
                         }
                     ),
                   );

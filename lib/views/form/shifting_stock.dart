@@ -28,10 +28,14 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
   TextEditingController sourceProductController = TextEditingController(text: '');
   TextEditingController shiftQtyController = TextEditingController(text: '');
   TextEditingController destinationProductController = TextEditingController(text: '');
-  int? sourceProdId;
+  int? sourceProdId; //untuk mengetahui siapa saja destination productnya
   int? destProdId;
+  double? sourceSize;
+  double? destSize;
 
   late ShiftingStockProvider shiftingStockProvider;
+
+  int? destRoundQty;
 
   @override
   void initState() {
@@ -53,6 +57,34 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
 
   @override
   Widget build(BuildContext context) {
+    handleAddData() async{
+      if(await shiftingStockProvider.shiftingStock(
+        sourceProductId: sourceProdId!,
+        destProductId: destProdId!,
+        quantity: int.parse(shiftQtyController.text),
+        destQty: shiftingStockProvider.clickChangeDestQty ? shiftingStockProvider.destQtyToChange : destRoundQty!)
+      ) {
+        //Back to manage product page with newly created product
+        shiftingStockProvider.getShiftStocks();
+        Navigator.popUntil(context, ModalRoute.withName('/manage-shifting-stock'));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Stok berhasil dialihkan'),
+            backgroundColor: secondaryColor,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Stok gagal dialihkan'),
+            backgroundColor: alertColor,
+            duration: const Duration(seconds: 2),
+          )
+        );
+      }
+    }
+
     Widget sourceProduct(){
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -102,19 +134,31 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                         ),
                         onEditingComplete: (){
                           formKeys[0].currentState!.validate()
-                            ? data.sourceIsSet() //NOTE: product source akan diset true kalau sudah lolos validasi
+                            ? (){}
                             : [data.sourceIsNotSet(),
                               sourceProdId = null,
                               shiftQtyController.clear(),
                               destinationProductController.clear(),
                               FocusScope.of(context).unfocus(),];
-                        }
+                        },
                     ),
                     onSuggestionSelected: (ProductModel suggestion) {
                       sourceProductController.text = suggestion.name;
+
+                      //kalau source prod id sudah ada isinya (yg berarti source sudah prnah diisi sebelumnya)
+                      //maka destination sebelumnya harus diclear terlebih dulu
+                      if(sourceProdId != null) {
+                        shiftQtyController.clear();
+                        destinationProductController.clear();
+                      }
+
                       sourceProdId = suggestion.id;
+                      sourceSize = suggestion.size;
                       data.getDestProductSuggestions('',sourceProdId!);
-                      data.setMaxShiftQty(suggestion.stock);
+                      data.setMaxShiftQty(suggestion.stock); //NOTE: di sini product source akan diset true dan set max qty
+
+                      //NOTE: saat pilih source baru, clicked change destnya di-reset jd false lg
+                      data.clickToChangeDestQty(false);
                     },
                     itemBuilder: (context, ProductModel suggestion) {
                       return ListTile(
@@ -160,7 +204,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
           ),
           Consumer<ShiftingStockProvider>(
             builder: (context, data, child) {
-              return data.isSourceProductSet == true
+              return data.sourceProductValue == true
                 ? Text(
                     'Maksimal ${data.maxQty} buah',
                     style: priceTextStyle.copyWith(
@@ -186,9 +230,11 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                   textInputType: TextInputType.number,
                   actionKeyboard: TextInputAction.done,
                   inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-                  readOnly: data.isSourceProductSet ? false : true, //kalau set source product salah, maka readOnlynya true
+                  readOnly: data.sourceProductValue == true
+                      ? false
+                      : true, //kalau value source product false, maka readOnlynya true
                   validator: (value) {
-                    if(data.isSourceProductSet) {
+                    if(data.sourceProductValue) {
                       if (value!.isEmpty) {
                         return 'Jumlah pengalihan harus diisi';
                       } else if(int.parse(value) > data.maxQty!) {
@@ -199,6 +245,15 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                       return null;
                     }
                     return null;
+                  },
+                  onChanged: (shiftQtyController) {
+                    if(formKeys[1].currentState!.validate()) {
+                      data.setQtyValue(true);
+                    } else {
+                      data.setQtyValue(false);
+                    }
+                    //NOTE: saat ubah nilai jml yg mau dialihkan, clicked change dest di-reset jd false
+                    data.clickToChangeDestQty(false);
                   },
                 );
               }
@@ -222,7 +277,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                   );
                 },
                 validator: (value) {
-                  if(data.isSourceProductSet) {
+                  if(data.sourceProductValue == true) {
                     if (value!.isEmpty) {
                       return 'Produk tujuan harus diisi';
                     } else if(data.validateDestProduct(value) == false) {
@@ -249,25 +304,35 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                       fillColor: formColor,
                       hintText: 'Pilih/cari produk tujuan pengalihan',
                       hintStyle: secondaryTextStyle,
-                    )
+                    ),
+                  onEditingComplete: () {
+                      formKeys[2].currentState!.validate()
+                        ? (){}
+                        : [data.setDestinationValue(false), FocusScope.of(context).unfocus()];
+                  }
                 ),
                 onSuggestionSelected: (ProductModel suggestion) {
                   destinationProductController.text = suggestion.name;
                   destProdId = suggestion.id;
+                  destSize = suggestion.size;
+                  data.setDestinationValue(true);
+                  //NOTE: saat pilih dest baru, clicked change dest qty di-reset jd false
+                  data.clickToChangeDestQty(false);
                 },
                 itemBuilder: (context, ProductModel suggestion) {
                   return ListTile(
                     title: Text(suggestion.name, style: primaryTextStyle,),
                   );
                 },
-                errorBuilder: (context, error) => SizedBox(
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      sourceProductController.text == '' || data.isSourceProductSet == false
-                          ? 'Mohon isi produk asal dgn benar terlebih dulu'
-                          : 'Terjadi kesalahan, mohon ulangi pencarian',
-                      style: alertTextStyle,
+                errorBuilder: (context, error) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        'Tidak ada produk tujuan untuk produk asal yang dipilih',
+                        style: alertTextStyle,
+                      ),
                     ),
                   ),
                 ),
@@ -299,7 +364,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
           ),
           Consumer<ShiftingStockProvider>(
             builder: (context, data, child) {
-              if(data.isSourceProductSet == true) {
+              if(data.sourceProductValue == true) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -330,7 +395,199 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
         ],
       );
     }
-    
+
+    Widget showFormEditQty(ShiftingStockProvider data) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 10.0, left: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text('Ubah jumlah tujuan', style: primaryTextStyle,),
+                const SizedBox(width: 20,),
+                InkWell(
+                  child: Ink(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: const Color(0xffe5e5e2)
+                    ),
+                    child: Text(
+                      'Reset',
+                      style: greyTextStyle,
+                    ),
+                  ),
+                  onTap: () {
+                    //NOTE: saat klik reset, nilai dest qty akan dikembalikan spt semula
+                    data.setInitDestQty(destRoundQty!);
+                  },
+                ),
+                const SizedBox(width: 16,),
+                InkWell(
+                  child: Ink(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: const Color(0xfff8e3e3)
+                    ),
+                    child: Text(
+                      'Batal',
+                      style: alertTextStyle,
+                    ),
+                  ),
+                  onTap: () {
+                    //NOTE: saat klik batal utk ubah nilai dest qty,
+                    //clicked change akan di-reset jd false & nilai dest qty dikembalikan spt semula
+                    data.clickToChangeDestQty(false);
+                    data.setInitDestQty(destRoundQty!);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 8,),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: secondaryTextColor.withOpacity(0.5)),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                        Icons.remove_circle,
+                        color: data.destQtyToChange > 1
+                            ? secondaryColor
+                            : secondaryTextColor,
+                    ),
+                    iconSize: 28,
+                    onPressed: () {
+                      if(data.destQtyToChange > 1) {
+                        //NOTE: jika destQty nilainya lebih dr 1, maka masih bisa dikurangi
+                        data.reduceDestQty();
+                      } else {
+                        return;
+                      }
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(data.destQtyToChange.toString()),
+                  ),
+                  IconButton(
+                    iconSize: 28,
+                    onPressed: () {
+                      //NOTE: tambah nilai destQty
+                      data.addDestQty();
+                    },
+                    icon: Icon(Icons.add_circle, color: secondaryColor,),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget editQtyManual() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '  Perhitungan sistem kurang pas?',
+            style: primaryTextStyle.copyWith(
+              fontWeight: semiBold,
+            ),
+          ),
+          const SizedBox(height: 2,),
+          Consumer<ShiftingStockProvider>(
+            builder: (context, data, child) {
+              if (data.clickChangeDestQty) {
+                return showFormEditQty(data);
+              } else {
+                return TextButton(
+                  onPressed: () {
+                    //NOTE: kalau owner klik ubah jml tujuan, clicked change jd bernilai true
+                    //dan destQty akan diset nilainya dgn hasil perhitungan sistem
+                    data.clickToChangeDestQty(true);
+                    data.setInitDestQty(destRoundQty!);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(bottom: 1),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                              color: priceColor,
+                              width: 1.0,
+                            )
+                        )
+                    ),
+                    child: Text(
+                        'Klik di sini untuk ubah jumlah tujuan',
+                        style: priceTextStyle
+                    ),
+                  ),
+                );
+              }
+            }
+          ),
+        ],
+      );
+    }
+
+    Widget notes(ShiftingStockProvider data) {
+      if(data.sourceProductValue == true &&
+          (shiftQtyController.text.isNotEmpty && data.qtyShiftValue == true) &&
+          (destinationProductController.text.isNotEmpty && data.destProductValue == true)
+      ) {
+          double destQty = int.tryParse(shiftQtyController.text)! * sourceSize! * (1/destSize!);
+          destRoundQty = destQty.round();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: const Color(0xffFFEDCB),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Catatan',
+                      style: primaryTextStyle.copyWith(
+                          fontWeight: semiBold
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    Text(
+                      'Stok produk asal (${sourceProductController.text}) akan berkurang '
+                          'sebanyak ${shiftQtyController.text} buah.',
+                      style: primaryTextStyle,
+                    ),
+                    const SizedBox(height: 10,),
+                    Text(
+                      'Stok ${destinationProductController.text} jadi bertambah '
+                          'sebanyak $destRoundQty buah.',
+                      style: primaryTextStyle,
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              editQtyManual(),
+            ],
+          );
+        } else {
+          return const SizedBox();
+        }
+    }
+
     Widget content() {
       return SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -342,7 +599,13 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
             shiftQty(),
             const SizedBox(height: 20,),
             destinationProduct(),
-            const SizedBox(height: 50,),
+            const SizedBox(height: 20,),
+            Consumer<ShiftingStockProvider>(
+              builder: (context, data, child){
+                return notes(data);
+              }
+            ),
+            const SizedBox(height: 45,),
             SizedBox(
               width: double.infinity,
               child: Consumer<ShiftingStockProvider>(
@@ -351,19 +614,14 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                     onClick: () {
                       bool allIsValidated = formKeys.every((key) => key.currentState!.validate());
                       if(allIsValidated){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('Data berhasil ditambahkan'),
-                            backgroundColor: secondaryColor,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
+                        handleAddData();
                       }
                     },
                   );
                 }
               ),
             ),
+            const SizedBox(height: 20,),
           ],
         )
       );

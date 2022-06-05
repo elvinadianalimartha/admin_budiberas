@@ -10,12 +10,19 @@ class ShiftingStockProvider with ChangeNotifier{
   List<ProductModel> _sourceProductList = [];
   List<ProductModel> _destProductList = [];
 
+  DateTime? _searchByDate;
+
   bool loading = false;
-  bool isSourceProductSet = false;
+  bool sourceProductValue = false;
+  bool qtyShiftValue = false;
+  bool destProductValue = false;
 
   int? maxQty;
 
-  DateTime? _searchByDate;
+  //Jika owner mau mengganti destination qty
+  bool clickChangeDestQty = false;
+  late int _destQtyToChange;
+  int get destQtyToChange => _destQtyToChange;
 
   List<ShiftStockModel> get shiftStocks => _searchByDate == null
     ? _shiftStocks
@@ -61,28 +68,62 @@ class ShiftingStockProvider with ChangeNotifier{
     return exist;
   }
 
-  sourceIsSet() {
-    isSourceProductSet = true;
-    notifyListeners();
-  }
-
-  sourceIsNotSet() {
-    isSourceProductSet = false;
-    notifyListeners();
-  }
-
   setMaxShiftQty(int qty) {
-    isSourceProductSet = true;
+    sourceProductValue = true;
     maxQty = qty;
     notifyListeners();
     print(maxQty);
   }
 
-  void disposeValue() {
-    isSourceProductSet = false;
+  sourceIsNotSet() {
+    sourceProductValue = false;
     maxQty = null;
+    notifyListeners();
   }
 
+  setQtyValue(bool val){
+    qtyShiftValue = val;
+    notifyListeners();
+  }
+
+  setDestinationValue(bool val) {
+    destProductValue = val;
+    notifyListeners();
+  }
+
+  //NOTE: bagian ini dipanggil jika owner mau ganti destination qty
+  //yg sebelumnya sdh dihitung scr otomatis oleh sistem
+  clickToChangeDestQty(bool val) {
+    clickChangeDestQty = val;
+    notifyListeners();
+  }
+
+  setInitDestQty(int initDestQty) {
+    _destQtyToChange = initDestQty;
+    notifyListeners();
+  }
+
+  reduceDestQty() {
+    _destQtyToChange--;
+    notifyListeners();
+  }
+
+  addDestQty() {
+    _destQtyToChange++;
+    notifyListeners();
+  }
+
+  //NOTE: semua value data di-reset atau dikembalikan ke awal ketika owner sudah tdk berada di page ini
+  void disposeValue() {
+    loading = false;
+    sourceProductValue = false;
+    maxQty = null;
+    qtyShiftValue = false;
+    destProductValue = false;
+    clickChangeDestQty = false;
+  }
+
+  //NOTE: bagian getShiftStocks ke bawah ini untuk melakukan aksi tampil, alihkan, dan batal
   Future<void> getShiftStocks() async{
     loading = true;
     try {
@@ -104,12 +145,14 @@ class ShiftingStockProvider with ChangeNotifier{
     required int sourceProductId,
     required int destProductId,
     required int quantity,
+    required int destQty,
   }) async {
     try{
       if(await ShiftingStockService().shiftingStock(
         sourceProductId: sourceProductId,
         destProductId: destProductId,
-        quantity: quantity
+        quantity: quantity,
+        destQty: destQty,
       )) {
         return true;
       } else {

@@ -40,6 +40,7 @@ class ShiftingStockService {
     required int sourceProductId,
     required int destProductId,
     required int quantity,
+    required int destQty,
   }) async {
     var url = '$baseUrl/shiftingStock';
     var headers = {'Content-Type': 'application/json'};
@@ -47,6 +48,7 @@ class ShiftingStockService {
       'product_id': sourceProductId,
       'shiftStockDestination': destProductId,
       'quantity': quantity,
+      'destQty': destQty,
     });
 
     var response = await http.post(
