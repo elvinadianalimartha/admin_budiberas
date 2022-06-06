@@ -114,7 +114,7 @@ class ReturnToSupplierCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ubah jumlah :',
+                      'Ubah jumlah menjadi :',
                       style: greyTextStyle.copyWith(
                         fontWeight: medium,
                       ),
@@ -134,19 +134,8 @@ class ReturnToSupplierCard extends StatelessWidget {
                           return 'Jumlah harus diisi!';
                         } else if(int.parse(value) <= 0) {
                           return 'Jumlah harus lebih dari 0!';
-                        }
-
-                        switch(outStocks.productStock < 1) {
-                          case true:
-                            if(int.parse(value) > outStocks.quantity) {
-                              return 'Jumlah retur tidak bisa melebihi ${outStocks.quantity}';
-                            }
-                            break;
-                          case false:
-                            if(int.parse(value) > maxOutQty) {
-                              return 'Jumlah retur tidak bisa melebihi $maxOutQty';
-                            }
-                            break;
+                        } else if(int.parse(value) > maxOutQty) {
+                          return 'Jumlah retur tidak bisa melebihi $maxOutQty';
                         }
                         return null;
                       },
