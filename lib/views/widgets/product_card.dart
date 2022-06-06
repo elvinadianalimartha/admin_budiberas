@@ -53,6 +53,7 @@ class _ProductCardState extends State<ProductCard> {
     }) async {
       if(await productProvider.updateProductPrice(id: id, price: newPrice)) {
         Navigator.pop(context);
+        newPriceController.clear();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Harga produk berhasil diperbarui'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
         );
@@ -176,6 +177,8 @@ class _ProductCardState extends State<ProductCard> {
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return 'Harga produk harus diisi';
+                                  } else if(int.parse(value) <= 0) {
+                                    return 'Harga produk harus lebih dari 0';
                                   }
                                   return null;
                                 },
@@ -206,7 +209,6 @@ class _ProductCardState extends State<ProductCard> {
                                         newPrice: double.parse(newPriceController.text)
                                     );
                                   }
-                                  newPriceController.clear();
                                 },
                               )
                           ),
