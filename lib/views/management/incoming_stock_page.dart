@@ -1,5 +1,6 @@
 import 'package:budiberas_admin_9701/models/incoming_stock_model.dart';
 import 'package:budiberas_admin_9701/providers/incoming_stock_provider.dart';
+import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/services/suggestion_product_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/incoming_stocks_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,7 +53,8 @@ class _IncomingStockState extends State<IncomingStock> {
   void getInit() async {
     await Future.wait([
       Provider.of<IncomingStockProvider>(context, listen: false).getIncomingStocks(statusParam: 'Tambah stok'),
-      Provider.of<IncomingStockProvider>(context, listen: false).getIncomingStocks(statusParam: 'Retur dari pembeli')
+      Provider.of<IncomingStockProvider>(context, listen: false).getIncomingStocks(statusParam: 'Retur dari pembeli'),
+      Provider.of<ProductProvider>(context, listen: false).getProducts(),
     ]);
   }
 
@@ -70,10 +72,6 @@ class _IncomingStockState extends State<IncomingStock> {
 
   @override
   Widget build(BuildContext context) {
-    //IncomingStockProvider incomingStockProvider =  Provider.of<IncomingStockProvider>(context);
-
-    print('build incoming stock page');
-
     handleAddedData(IncomingStockProvider incomingStockProvider, String status) async {
       if(await incomingStockProvider.createIncomingStock(
           productId: addedProductId,
@@ -153,60 +151,68 @@ class _IncomingStockState extends State<IncomingStock> {
                         fontSize: 13,
                       ),
                     ),
-                    TypeAheadFormField<ProductModel>(
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Produk harus diisi!';
-                        }
-                        return null;
-                      },
-                      hideSuggestionsOnKeyboardHide: false,
-                      debounceDuration: const Duration(milliseconds: 500),
-                      textFieldConfiguration: TextFieldConfiguration(
-                        style: primaryTextStyle,
-                        controller: statusName == 'Retur dari pembeli'
-                            ? chooseReturnProductController
-                            : chooseAddedProductController,
-                        decoration: InputDecoration(
-                          hintText: 'Pilih/cari produk',
-                          hintStyle: secondaryTextStyle,
-                        )
-                      ),
-                      onSuggestionSelected: (ProductModel suggestion) {
-                        if(statusName == 'Retur dari pembeli') {
-                          chooseReturnProductController.text = suggestion.name;
-                          returnProductId = suggestion.id;
-                        }else if(statusName == 'Tambah stok') {
-                          chooseAddedProductController.text = suggestion.name;
-                          addedProductId = suggestion.id;
-                        }
-                      },
-                      itemBuilder: (context, ProductModel suggestion) {
-                        return ListTile(
-                          title: Text(suggestion.name, style: primaryTextStyle,),
+                    Consumer<ProductProvider>(
+                      builder: (context, data, child) {
+                        return TypeAheadFormField<ProductModel>(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Produk harus diisi!';
+                              } else if(data.checkIfUsed(value) == false) {
+                                return 'Mohon pilih nama produk yang ada di daftar';
+                              }
+                              return null;
+                            },
+                            hideSuggestionsOnKeyboardHide: false,
+                            debounceDuration: const Duration(milliseconds: 500),
+                            textFieldConfiguration: TextFieldConfiguration(
+                                style: primaryTextStyle,
+                                controller: statusName == 'Retur dari pembeli'
+                                    ? chooseReturnProductController
+                                    : chooseAddedProductController,
+                                decoration: InputDecoration(
+                                  hintText: 'Pilih/cari produk',
+                                  hintStyle: secondaryTextStyle,
+                                ),
+                              onEditingComplete: (){} //NOTE: tombol done pd keyboard tdk bisa diklik spy owner hanya bisa pilih yg ada di dropdown
+                            ),
+                            onSuggestionSelected: (ProductModel suggestion) {
+                              if(statusName == 'Retur dari pembeli') {
+                                chooseReturnProductController.text = suggestion.name;
+                                returnProductId = suggestion.id;
+                              }else if(statusName == 'Tambah stok') {
+                                chooseAddedProductController.text = suggestion.name;
+                                addedProductId = suggestion.id;
+                              }
+                            },
+                            itemBuilder: (context, ProductModel suggestion) {
+                              return ListTile(
+                                title: Text(suggestion.name, style: primaryTextStyle,),
+                              );
+                            },
+                            suggestionsCallback: (pattern) {
+                              return SuggestionProductService().getSuggestionProduct(pattern);
+                            },
+                            errorBuilder: (context, error) => SizedBox(
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  'Terjadi kesalahan, mohon ulangi pencarian',
+                                  style: alertTextStyle,
+                                ),
+                              ),
+                            ),
+                            noItemsFoundBuilder: (context) => SizedBox(
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  'Produk tidak ditemukan',
+                                  style: greyTextStyle,
+                                ),
+                              ),
+                            )
                         );
-                      },
-                      suggestionsCallback: (pattern) {
-                        return SuggestionProductService().getSuggestionProduct(pattern);
-                      },
-                      errorBuilder: (context, error) => SizedBox(
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            'Terjadi kesalahan, mohon ulangi pencarian',
-                            style: alertTextStyle,
-                          ),
-                        ),
-                      ),
-                      noItemsFoundBuilder: (context) => SizedBox(
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            'Produk tidak ditemukan',
-                            style: greyTextStyle,
-                          ),
-                        ),
-                      )
+                      }
                     ),
                     const SizedBox(height: 30,),
                     Text(
