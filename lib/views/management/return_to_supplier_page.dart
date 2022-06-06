@@ -1,5 +1,6 @@
 import 'package:budiberas_admin_9701/models/out_stock_model.dart';
 import 'package:budiberas_admin_9701/providers/out_stock_provider.dart';
+import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/services/suggestion_product_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/return_to_supplier_card.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/app_bar.dart';
@@ -30,7 +31,7 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
 
   TextEditingController chooseProductController = TextEditingController(text: '');
   int productId = 0;
-  int maxOutQty = 0;
+  int? maxOutQty;
 
   TextEditingController outQtyController = TextEditingController(text: '');
 
@@ -41,7 +42,10 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
   }
 
   void getInit() async{
-    await Provider.of<OutStockProvider>(context, listen: false).getOutStocks();
+    await Future.wait([
+      Provider.of<OutStockProvider>(context, listen: false).getOutStocks(),
+      Provider.of<ProductProvider>(context, listen: false).getProducts(),
+    ]);
   }
 
   @override
@@ -113,54 +117,62 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
                         fontSize: 13,
                       ),
                     ),
-                    TypeAheadFormField<ProductModel>(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Produk harus diisi!';
-                          }
-                          return null;
-                        },
-                        hideSuggestionsOnKeyboardHide: false,
-                        debounceDuration: const Duration(milliseconds: 500),
-                        textFieldConfiguration: TextFieldConfiguration(
-                            style: primaryTextStyle,
-                            controller: chooseProductController,
-                            decoration: InputDecoration(
-                              hintText: 'Pilih/cari produk',
-                              hintStyle: secondaryTextStyle,
+                    Consumer<ProductProvider>(
+                      builder: (context, data, child) {
+                        return TypeAheadFormField<ProductModel>(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Produk harus diisi!';
+                              } else if(data.checkIfUsed(value) == false) {
+                                return 'Mohon pilih nama produk yang ada di daftar';
+                              }
+                              return null;
+                            },
+                            hideSuggestionsOnKeyboardHide: false,
+                            debounceDuration: const Duration(milliseconds: 500),
+                            textFieldConfiguration: TextFieldConfiguration(
+                                style: primaryTextStyle,
+                                controller: chooseProductController,
+                                decoration: InputDecoration(
+                                  hintText: 'Pilih/cari produk',
+                                  hintStyle: secondaryTextStyle,
+                                ),
+                                onEditingComplete: (){},
+                            ),
+                            onSuggestionSelected: (ProductModel suggestion) {
+                              chooseProductController.text = suggestion.name;
+                              productId = suggestion.id;
+                              maxOutQty = suggestion.stock;
+                            },
+                            itemBuilder: (context, ProductModel suggestion) {
+                              return ListTile(
+                                title: Text(suggestion.name, style: primaryTextStyle,),
+                              );
+                            },
+                            suggestionsCallback: (pattern) {
+                              return SuggestionProductService().getAvailableStockProduct(pattern);
+                            },
+                            errorBuilder: (context, error) => SizedBox(
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  'Terjadi kesalahan, mohon ulangi pencarian',
+                                  style: alertTextStyle,
+                                ),
+                              ),
+                            ),
+                            noItemsFoundBuilder: (context) => SizedBox(
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  'Produk tidak ditemukan',
+                                  style: greyTextStyle,
+                                ),
+                              ),
                             )
-                        ),
-                        onSuggestionSelected: (ProductModel suggestion) {
-                          chooseProductController.text = suggestion.name;
-                          productId = suggestion.id;
-                          maxOutQty = suggestion.stock;
-                        },
-                        itemBuilder: (context, ProductModel suggestion) {
-                          return ListTile(
-                            title: Text(suggestion.name, style: primaryTextStyle,),
-                          );
-                        },
-                        suggestionsCallback: (pattern) {
-                          return SuggestionProductService().getAvailableStockProduct(pattern);
-                        },
-                        errorBuilder: (context, error) => SizedBox(
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              'Terjadi kesalahan, mohon ulangi pencarian',
-                              style: alertTextStyle,
-                            ),
-                          ),
-                        ),
-                        noItemsFoundBuilder: (context) => SizedBox(
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              'Produk tidak ditemukan',
-                              style: greyTextStyle,
-                            ),
-                          ),
-                        )
+                        );
+                      }
                     ),
                     const SizedBox(height: 30,),
                     Text(
@@ -171,7 +183,7 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
                       ),
                     ),
                     const SizedBox(height: 2,),
-                    chooseProductController.text == ''
+                    chooseProductController.text == '' || maxOutQty == null
                       ? const SizedBox()
                       : Text(
                         'Maksimal $maxOutQty buah',
@@ -193,7 +205,7 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
                           return 'Jumlah harus diisi!';
                         } else if(int.parse(value) <= 0) {
                           return 'Jumlah harus lebih dari 0!';
-                        } else if(int.parse(value) > maxOutQty) {
+                        } else if(int.parse(value) > maxOutQty!) {
                           return 'Jumlah retur tidak bisa melebihi stok produk ($maxOutQty buah)';
                         }
                         return null;
