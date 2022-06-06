@@ -186,4 +186,18 @@ class ProductService{
       throw Exception('Data produk gagal dihapus');
     }
   }
+
+  Future<int> productInTransaction({
+    required int id,
+  }) async {
+    var url = '$baseUrl/productInTransaction/$id';
+    var headers = {'Content-Type': 'application/json'};
+
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    return int.parse(response.body);
+  }
 }

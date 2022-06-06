@@ -1,6 +1,7 @@
 import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/app_bar.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/text_field.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,8 +34,10 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
   }
 
   getInit() async {
-    await Provider.of<CategoryProvider>(context, listen: false).getCategories();
-    Provider.of<ProductProvider>(context, listen: false).products;
+    await Future.wait([
+      Provider.of<CategoryProvider>(context, listen: false).getCategories(),
+      Provider.of<ProductProvider>(context, listen: false).checkProductInTransaction(id: widget.product.id),
+    ]);
     Provider.of<ProductProvider>(context, listen: false).setDefaultCanBeRetailed(widget.product.canBeRetailed);
   }
 
@@ -55,14 +58,6 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
     Object? _value;
     int _intValue = widget.product.category.id;
 
-    // resetForm() {
-    //   _intValue = null;
-    //   productNameController.clear();
-    //   sizeController.clear();
-    //   priceController.clear();
-    //   descriptionController.clear();
-    // }
-
     handleEditData(ProductProvider productProvider) async {
       print('categoryId: $_intValue');
       print('id: ${widget.product.id}');
@@ -76,10 +71,6 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
         description: descriptionController.text,
         canBeRetailed: productProvider.selectedValue,
       )) {
-
-        //Reset to starting condition
-        //resetForm();
-        //productProvider.selectedValue = 1;
 
         //Go to manage product page with newly created product
         productProvider.getProducts();
@@ -117,7 +108,7 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
           Consumer<CategoryProvider>(
             builder: (context, data, child) {
               List<CategoryModel> listCategories = data.categories;
-              return DropdownButtonFormField(
+              return DropdownButtonFormField2(
                   decoration: InputDecoration(
                     isCollapsed: true,
                     isDense: true,
@@ -170,17 +161,18 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
           Consumer<ProductProvider>(
               builder: (context, productProvider, child) {
                 return TextFormFieldWidget(
-                  readOnly: true,
+                  readOnly: productProvider.productInTransaction == 0 ? false : true,
                   hintText: 'Masukkan nama produk',
                   controller: productNameController,
-                  // validator: (value) {
-                  //   if (value!.isEmpty) {
-                  //     return 'Nama produk harus diisi';
-                  //   } else if(productProvider.checkIfUsed(value)) {
-                  //     return 'Nama produk sudah pernah digunakan';
-                  //   }
-                  //   return null;
-                  // },
+                  actionKeyboard: TextInputAction.done,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Nama produk harus diisi';
+                    } else if(productProvider.editCheckIfUsed(widget.product.id, value)) {
+                      return 'Nama produk sudah pernah digunakan';
+                    }
+                    return null;
+                  },
                 );
               }
           ),
@@ -205,6 +197,7 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
             controller: sizeController,
             textInputType: TextInputType.number,
             inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            actionKeyboard: TextInputAction.done,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Ukuran harus diisi';
@@ -286,6 +279,7 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
             controller: priceController,
             textInputType: TextInputType.number,
             inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            actionKeyboard: TextInputAction.done,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Harga produk harus diisi';

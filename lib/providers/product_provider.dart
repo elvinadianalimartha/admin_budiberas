@@ -21,6 +21,9 @@ class ProductProvider with ChangeNotifier{
     notifyListeners();
   }
 
+  int? _countProduct;
+  int? get productInTransaction => _countProduct;
+
   void disposeValues() {
     _searchQuery = '';
     //_products = [];
@@ -86,14 +89,21 @@ class ProductProvider with ChangeNotifier{
   }
 
   bool checkIfUsed(String? value) {
-    var same = _products.where(
+    bool isUsed = _products.any(
             (element) => element.name.toLowerCase() == value?.toLowerCase()
     );
-    if(same.isNotEmpty) {
-      return true;
-    }else {
-      return false;
-    }
+    return isUsed;
+  }
+
+  bool editCheckIfUsed(int idProductToEdit, String? value) {
+    List<ProductModel> ignoredSelfProducts = _products.where(
+        (product) => product.id != idProductToEdit
+    ).toList();
+
+    bool isUsed = ignoredSelfProducts.any(
+                    (element) => element.name.toLowerCase() == value?.toLowerCase()
+                  );
+    return isUsed;
   }
 
   Future<bool> updateProduct({
@@ -131,6 +141,18 @@ class ProductProvider with ChangeNotifier{
   void setDefaultCanBeRetailed(int value) {
     selectedValue = value;
     notifyListeners();
+  }
+
+  Future<void> checkProductInTransaction({
+    required int id
+  }) async {
+    try {
+      _countProduct = await ProductService().productInTransaction(id: id);
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+    print('produk di transaksi: $_countProduct');
   }
 
   Future<bool> updateActivationProduct({
