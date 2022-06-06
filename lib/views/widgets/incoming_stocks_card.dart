@@ -292,7 +292,7 @@ class IncomingStocksCard extends StatelessWidget {
                     const Text(':'),
                     const SizedBox(width: 8,),
                     Text(
-                      '${incomingStocks.quantity}',
+                      '${incomingStocks.quantity} buah',
                       style: primaryTextStyle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

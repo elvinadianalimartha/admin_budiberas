@@ -305,7 +305,7 @@ class ReturnToSupplierCard extends StatelessWidget {
                     const Text(':'),
                     const SizedBox(width: 8,),
                     Text(
-                      '${outStocks.quantity}',
+                      '${outStocks.quantity} buah',
                       style: primaryTextStyle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
