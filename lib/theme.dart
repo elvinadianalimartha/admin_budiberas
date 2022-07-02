@@ -7,6 +7,7 @@ double defaultMargin = 20.0;
 Color primaryColor = Color(0xff1A607A);
 Color secondaryColor = Color(0xff5BC5A7);
 Color thirdColor = Color(0xff7DD1B9);
+Color fourthColor = Color(0xff9BDCC9);
 
 Color btnManageColor = Color(0xffCBFBED);
 Color btnColor = Color(0xffF59F02);

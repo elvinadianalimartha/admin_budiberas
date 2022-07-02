@@ -15,11 +15,14 @@ import 'package:budiberas_admin_9701/views/management/incoming_stock_page.dart';
 import 'package:budiberas_admin_9701/views/management/product_page.dart';
 import 'package:budiberas_admin_9701/views/management/return_to_supplier_page.dart';
 import 'package:budiberas_admin_9701/views/management/shift_stock_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
