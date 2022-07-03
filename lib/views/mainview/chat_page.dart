@@ -16,6 +16,9 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   TextEditingController searchController = TextEditingController(text: '');
+  var documents = [];
+  String valueSearch = '';
+  bool searchFilled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,25 +36,28 @@ class _ChatPageState extends State<ChatPage> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: secondaryTextColor),
             ),
-            hintText: 'Cari nama produk',
+            hintText: 'Cari nama pembeli',
             hintStyle: secondaryTextStyle,
             prefixIcon: Icon(Icons.search, color: secondaryTextColor, size: 20,),
-            // suffixIcon: statusFilled
-            //     ? InkWell(
-            //     onTap: () {
-            //       //clearSearch();
-            //     },
-            //     child: Icon(Icons.cancel, color: secondaryTextColor, size: 20,))
-            //     : null,
+            suffixIcon: searchFilled
+                ? InkWell(
+                    onTap: () {
+                      searchFilled = false;
+                      searchController.clear();
+                      setState(() {
+                        valueSearch = '';
+                      });
+                    },
+                    child: Icon(Icons.cancel, color: secondaryTextColor, size: 20,)
+                  )
+                : null,
             contentPadding: const EdgeInsets.all(12),
           ),
           onChanged: (value) {
-            // productProvider.searchProduct(value);
-            // if(value.isNotEmpty) {
-            //   statusFilled = true;
-            // } else {
-            //   statusFilled = false;
-            // }
+            setState(() {
+              valueSearch = value;
+            });
+            value.isNotEmpty ? searchFilled = true : searchFilled = false;
           },
         ),
       );
@@ -60,24 +66,24 @@ class _ChatPageState extends State<ChatPage> {
     Widget emptyChat(){
       return Center(
         child: SingleChildScrollView(
-          child: SizedBox(
-            width: double.infinity, //spy warna selebar layar
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/icon_headset.png', width: 80, color: secondaryColor,),
-                const SizedBox(height: 20,),
-                Text(
-                  'Belum ada obrolan saat ini',
-                  style: primaryTextStyle.copyWith(
-                    fontWeight: medium,
-                    fontSize: 16,
+            child: SizedBox(
+              width: double.infinity, //spy warna selebar layar
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/icon_headset.png', width: 80, color: secondaryColor,),
+                  const SizedBox(height: 20,),
+                  Text(
+                    'Belum ada obrolan saat ini',
+                    style: primaryTextStyle.copyWith(
+                      fontWeight: medium,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        )
       );
     }
 
@@ -86,16 +92,21 @@ class _ChatPageState extends State<ChatPage> {
         stream: MessageService().getUser(),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
-            var doc = snapshot.data!.docs;
-            if(doc.isEmpty) {
+            documents = snapshot.data!.docs.where(
+                (doc) => doc.get('userName').toString().toLowerCase()
+                    .contains(valueSearch.toLowerCase())
+            ).toList();
+
+            if(documents.isEmpty) {
               return emptyChat();
             }
+
             return ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: doc.length,
+              itemCount: documents.length,
               itemBuilder: (context, index) {
-                var document = doc[index];
+                var document = documents[index];
                 return ChatTile(user: document, docId: document.id,);
               },
             );
@@ -112,12 +123,12 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: customAppBar(text: 'Daftar Obrolan'),
-      body: ListView(
+      body: Column(
         children: [
           searchChat(),
-          contentChat(),
+          Flexible(child: contentChat()),
         ],
-      ),
+      )
     );
   }
 }
