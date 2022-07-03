@@ -27,20 +27,18 @@ class DetailChatPage extends StatefulWidget {
 class _DetailChatPageState extends State<DetailChatPage> {
   TextEditingController messageController = TextEditingController(text: '');
 
-  // handleAddMessage() async {
-  //   await MessageService().addMessage(
-  //     message: messageController.text,
-  //     userId: widget.message.userId,
-  //     userName: widget.message.userName,
-  //     userImage: widget.message.userImage,
-  //     imageUrl: null,
-  //   );
-  //
-  //   //clear after send message
-  //   setState(() {
-  //     messageController.text = '';
-  //   });
-  // }
+  handleAddMessage() async {
+    await MessageService().addMessage(
+      message: messageController.text,
+      userId: widget.userId,
+      imageUrl: null,
+    );
+
+    //clear after send message
+    setState(() {
+      messageController.text = '';
+    });
+  }
 
   Widget content() {
     return StreamBuilder<List<MessageDetailModel>>(
@@ -113,7 +111,9 @@ class _DetailChatPageState extends State<DetailChatPage> {
                   icon: const Icon(Icons.send, size: 20,),
                   color: Colors.white,
                   onPressed: () {
-                    //handleAddMessage();
+                    if(messageController.text != '') {
+                      handleAddMessage();
+                    }
                   },
                 ),
               )
