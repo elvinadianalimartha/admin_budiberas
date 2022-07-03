@@ -25,7 +25,9 @@ class ChatTile extends StatelessWidget {
           data = doc.last;
           return Text(
             data.get('message'),
-            style: data.get('isRead') ? greyTextStyle : priceTextStyle
+            style: data.get('isFromUser')
+              ? data.get('isRead') ? greyTextStyle : priceTextStyle
+              : greyTextStyle,
           );
         } else {
           return const SizedBox();
@@ -65,12 +67,11 @@ class ChatTile extends StatelessWidget {
               ));
             },
             child: StreamBuilder<QuerySnapshot>(
-              stream: user.reference.collection('messageContent').snapshots(),
+              //detail message diurutkan berdasarkan createdAt (nanti di lastMessagePreview akan diambil data lastnya)
+              stream: user.reference.collection('messageContent').orderBy('createdAt').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  var doc = snapshot.data!.docs.where(
-                          (element) => element.get('isFromUser') == true
-                  ).toList();
+                  var doc = snapshot.data!.docs;
 
                   return ListTile(
                     leading: CircleAvatar(

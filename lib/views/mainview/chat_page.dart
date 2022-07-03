@@ -1,3 +1,4 @@
+import 'package:budiberas_admin_9701/services/message_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/chat_tile.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/app_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -81,9 +82,8 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     Widget contentChat() {
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
       return StreamBuilder<QuerySnapshot>(
-        stream: firestore.collection('messages').snapshots(),
+        stream: MessageService().getUser(),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
             var doc = snapshot.data!.docs;
