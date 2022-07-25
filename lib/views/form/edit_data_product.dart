@@ -48,8 +48,15 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController productNameController = TextEditingController(text: widget.product.name);
 
-    int size = widget.product.size.toInt();
-    TextEditingController sizeController = TextEditingController(text: size.toString());
+    var size = widget.product.size;
+    var formattedSize;
+    var decimalNumber = size % 1; //get decimal value (angka di belakang koma)
+    if(decimalNumber == 0) {
+      formattedSize = size.toInt();
+    } else {
+      formattedSize = size;
+    }
+    TextEditingController sizeController = TextEditingController(text: formattedSize.toString());
 
     int price = widget.product.price.toInt();
     TextEditingController priceController = TextEditingController(text: price.toString());
@@ -196,7 +203,7 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
             hintText: 'Masukkan ukuran produk',
             controller: sizeController,
             textInputType: TextInputType.number,
-            inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            //inputFormatter: [FilteringTextInputFormatter.digitsOnly],
             actionKeyboard: TextInputAction.done,
             validator: (value) {
               if (value!.isEmpty) {
