@@ -75,7 +75,7 @@ class ChatTile extends StatelessWidget {
 
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(user.get('userImage')),
+                      backgroundImage: NetworkImage("https://ui-avatars.com/api/?background=random&name=${user.get('userName')}"),
                     ),
                     title: Text(user.get('userName'), style: primaryTextStyle,),
                     subtitle: lastMessagePreview(doc),
