@@ -17,6 +17,6 @@ AppBar customAppBar({
         fontSize: 16,
       ),
     ),
-    bottom: bottom,
+    bottom: bottom, //utk taruh tabs
   );
 }
