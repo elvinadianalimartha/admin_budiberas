@@ -22,11 +22,11 @@ class OutStockModel{
   OutStockModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     productName = json['product']['product_name'];
-    productStock = json['product']['stock'];
+    productStock = int.parse(json['product']['stock'].toString());
     isDeletedProduct = json['product']['deleted_at'];
     outDate = DateTime.tryParse(json['out_date'])!;
     outTime = json['out_time'];
-    quantity = json['quantity'];
+    quantity = int.parse(json['quantity'].toString());
     outStatus = json['out_status'];
   }
 }

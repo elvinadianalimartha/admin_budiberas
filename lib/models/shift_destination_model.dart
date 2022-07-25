@@ -15,6 +15,6 @@ class ShiftStockDestinationModel{
     id = json['id'];
     destProductName = json['product']['product_name'];
     isDeletedDestProduct = json['product']['deleted_at'];
-    qtyDest = json['quantity'];
+    qtyDest = int.parse(json['quantity'].toString());
   }
 }

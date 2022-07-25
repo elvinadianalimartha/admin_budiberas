@@ -18,12 +18,12 @@ class IncomingStockModel{
   });
 
   IncomingStockModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = int.parse(json['id'].toString());
     product = json['product']['product_name'];
     isDeletedProduct = json['product']['deleted_at'];
     incomingDate = DateTime.tryParse(json['incoming_date'])!;
     incomingTime = json['incoming_time'];
-    quantity = json['quantity'];
+    quantity = int.parse(json['quantity'].toString());
     incomingStatus = json['incoming_status'];
   }
 

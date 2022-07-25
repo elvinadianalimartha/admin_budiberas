@@ -39,10 +39,10 @@ class ProductModel{
     price = double.parse(json['price'].toString()); //utk jaga2 kalau ternyata backend set price sbg int
     description = json['description'];
 
-    stock = json['stock'];
+    stock = int.parse(json['stock'].toString());
     stockStatus = json['stock_status'];
     stockNotes = json['stock_notes'];
-    canBeRetailed = json['can_be_retailed'];
+    canBeRetailed = int.parse(json['can_be_retailed'].toString());
 
     category = CategoryModel.fromJson(json['product_category']);
 

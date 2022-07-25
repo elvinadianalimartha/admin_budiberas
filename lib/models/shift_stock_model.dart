@@ -24,11 +24,11 @@ class ShiftStockModel{
   ShiftStockModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     sourceProductName = json['product']['product_name'];
-    sourceProductSize = json['product']['size'];
+    sourceProductSize = int.parse(json['product']['size'].toString());
     isDeletedSourceProduct = json['product']['deleted_at'];
     shiftingDate = DateTime.tryParse(json['shifting_date'])!;
     shiftingTime = json['shifting_time'];
-    quantity = json['quantity'];
+    quantity = int.parse(json['quantity'].toString());
     shiftStockDestination = ShiftStockDestinationModel.fromJson(json['shift_stock_destination']);
   }
 }
