@@ -10,7 +10,7 @@ class MessageService {
       return firestore.collection('messages')
           .doc(docId) //tiap user punya docId yg unik
           .collection('messageContent')
-          .orderBy('createdAt')
+          .orderBy('createdAt', descending: true)
           .snapshots()
           .map((QuerySnapshot listDetail) {
             var result = listDetail.docs.map<MessageDetailModel>((DocumentSnapshot detailMessage) {

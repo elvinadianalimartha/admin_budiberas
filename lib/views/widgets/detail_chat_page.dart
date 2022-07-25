@@ -46,6 +46,7 @@ class _DetailChatPageState extends State<DetailChatPage> {
         builder: (context, snapshot) {
           if(snapshot.hasData) {
             return ListView( //spy list chatnya bisa discroll
+              reverse: true,
               padding: EdgeInsets.symmetric(
                 horizontal: defaultMargin,
               ),
