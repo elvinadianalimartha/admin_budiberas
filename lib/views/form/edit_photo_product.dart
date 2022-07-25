@@ -167,6 +167,7 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
         statusChanged = true;
         print("hapus: $statusChanged");
 
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Foto berhasil dihapus'),
@@ -175,10 +176,11 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
           ),
         );
       } else {
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Foto gagal diedit'),
-            backgroundColor: secondaryColor,
+            content: const Text('Foto gagal dihapus'),
+            backgroundColor: alertColor,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -337,7 +339,7 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
             child: Align(
               alignment: Alignment.topRight,
               child: SizedBox(
-                width: 150,
+                width: 180,
                 child: Consumer<GalleryProvider>(
                   builder: (context, data, child){
                     return AddButton(
@@ -396,17 +398,19 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/empty-image-icon.png', width: MediaQuery.of(context).size.width - (10 * defaultMargin),),
-            const SizedBox(height: 20,),
-            Text(
-              'Belum ada foto untuk produk ${widget.productName}',
-              textAlign: TextAlign.center,
-              style: primaryTextStyle.copyWith(
-                  fontWeight: medium,
-                  fontSize: 16),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Belum ada foto untuk produk\n${widget.productName}',
+                textAlign: TextAlign.center,
+                style: primaryTextStyle.copyWith(
+                    fontWeight: medium,
+                    fontSize: 16),
+              ),
             ),
-            const SizedBox(height: 36,),
+            const SizedBox(height: 20,),
             SizedBox(
-              width: 180,
+              width: 200,
               child: Consumer<GalleryProvider>(
                 builder: (context, data, child){
                   return AddButton(
@@ -421,7 +425,7 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
             ),
             const SizedBox(height: 20,),
             SizedBox(
-              width: 180,
+              width: 200,
               child: CancelButton(
                 onClick: () {
                   context.read<GalleryProvider>().productGalleries.clear();
