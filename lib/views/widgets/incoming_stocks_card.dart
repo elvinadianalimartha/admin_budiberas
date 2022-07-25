@@ -76,6 +76,8 @@ class IncomingStocksCard extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(
                   fontWeight: medium,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4,),
               Text(
@@ -83,6 +85,8 @@ class IncomingStocksCard extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(
                   fontWeight: medium,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const Divider(thickness: 1,),
               const SizedBox(height: 10,),
@@ -271,11 +275,13 @@ class IncomingStocksCard extends StatelessWidget {
                     const SizedBox(width: 36,),
                     const Text(':'),
                     const SizedBox(width: 8,),
-                    Text(
-                      '$formattedDate | ${incomingStocks.incomingTime} WIB',
-                      style: primaryTextStyle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      child: Text(
+                        '$formattedDate | ${incomingStocks.incomingTime}',
+                        style: primaryTextStyle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),

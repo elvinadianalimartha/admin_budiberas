@@ -42,7 +42,7 @@ class EditButton extends StatelessWidget {
           const SizedBox(width: 11,),
           Text(
             text,
-            style: changeBtnTextStyle.copyWith(
+            style: yellowTextStyle.copyWith(
               fontWeight: medium,
               fontSize: 12,
             ),

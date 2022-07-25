@@ -24,7 +24,10 @@ class AddButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8)
         ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 8
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,10 +35,13 @@ class AddButton extends StatelessWidget {
         children: [
           Icon(icon, color: btnManageColor,),
           const SizedBox(width: 11,),
-          Text(
-            text,
-            style: whiteTextStyle.copyWith(
-              fontWeight: medium,
+          Flexible(
+            child: Text(
+              text,
+              style: whiteTextStyle.copyWith(
+                fontWeight: medium,
+              ),
+              textAlign: TextAlign.center,
             ),
           )
         ],

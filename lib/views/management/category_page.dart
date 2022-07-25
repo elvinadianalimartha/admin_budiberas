@@ -286,7 +286,7 @@ class _ManageCategoryPageState extends State<ManageCategoryPage> {
               child: Align(
                 alignment: Alignment.topRight,
                 child: SizedBox(
-                  width: 180,
+                  width: 200,
                   child: Consumer<CategoryProvider>(
                     builder: (context, data, child) {
                       return AddButton(

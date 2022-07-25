@@ -210,15 +210,21 @@ class _FormAddProductState extends State<FormAddProduct> {
                       'Foto',
                       style: primaryTextStyle.copyWith(fontWeight: medium),
                     ),
-                    AddButton(
-                      text: 'Tambah Foto',
-                      icon: Icons.add_circle_outlined,
-                      onClick: () async {
-                        final source = await choosePhotoSource(context);
-                        if(source == null) return;
+                    const SizedBox(width: 20,),
+                    Flexible(
+                      child: SizedBox(
+                        width: 180,
+                        child: AddButton(
+                          text: 'Tambah Foto',
+                          icon: Icons.add_circle_outlined,
+                          onClick: () async {
+                            final source = await choosePhotoSource(context);
+                            if(source == null) return;
 
-                        getPicture(source, galleryProvider);
-                      },
+                            getPicture(source, galleryProvider);
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -265,7 +271,7 @@ class _FormAddProductState extends State<FormAddProduct> {
                     fillColor: formColor,
                     contentPadding: const EdgeInsets.all(16),
                   ),
-                  hint: Text('Pilih kategory produk', style: secondaryTextStyle,),
+                  hint: Text('Pilih kategori produk', style: secondaryTextStyle,),
                   items: listCategories.map((item) {
                     return DropdownMenuItem<Object>(
                       child: Text(item.category_name, style: primaryTextStyle.copyWith(fontSize: 14),),
@@ -338,7 +344,7 @@ class _FormAddProductState extends State<FormAddProduct> {
             hintText: 'Masukkan ukuran produk',
             controller: sizeController,
             textInputType: TextInputType.number,
-            inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            //inputFormatter: [FilteringTextInputFormatter.digitsOnly],
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Ukuran harus diisi';

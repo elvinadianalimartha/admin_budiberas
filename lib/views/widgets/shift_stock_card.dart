@@ -174,7 +174,7 @@ class ShiftStockCard extends StatelessWidget {
                 const SizedBox(width: 8,),
                 Flexible(
                   child: Text(
-                    '$formattedDate | ${shiftStocks.shiftingTime} WIB',
+                    '$formattedDate | ${shiftStocks.shiftingTime}',
                     style: primaryTextStyle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

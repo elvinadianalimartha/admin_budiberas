@@ -85,6 +85,8 @@ class ReturnToSupplierCard extends StatelessWidget {
                 style: greyTextStyle.copyWith(
                   fontWeight: medium,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8,),
               const Divider(thickness: 1,),
@@ -273,11 +275,13 @@ class ReturnToSupplierCard extends StatelessWidget {
                     const SizedBox(width: 36,),
                     const Text(':'),
                     const SizedBox(width: 8,),
-                    Text(
-                      '$formattedDate | ${outStocks.outTime} WIB',
-                      style: primaryTextStyle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      child: Text(
+                        '$formattedDate | ${outStocks.outTime}',
+                        style: primaryTextStyle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
