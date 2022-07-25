@@ -2,6 +2,7 @@
 import 'package:budiberas_admin_9701/providers/page_provider.dart';
 import 'package:budiberas_admin_9701/views/mainview/info_page.dart';
 import 'package:budiberas_admin_9701/views/mainview/management_page.dart';
+import 'package:budiberas_admin_9701/views/mainview/order_page.dart';
 import 'package:budiberas_admin_9701/views/mainview/recap_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +111,7 @@ class _MainPageState extends State<MainPage> {
         case 0:
           return RecapPage();
         case 1:
-          return ChatPage();
+          return OrderPage();
         case 2:
           return ManagementPage();
         case 3:
