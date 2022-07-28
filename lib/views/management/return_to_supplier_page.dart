@@ -289,7 +289,7 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
                   decoration: InputDecoration.collapsed(
                       enabled: false,
                       hintText: 'Cari stok keluar per tanggal',
-                      hintStyle: secondaryTextStyle
+                      hintStyle: secondaryTextStyle.copyWith(fontSize: 14)
                   ),
                 ),
               ),

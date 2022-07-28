@@ -37,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
               borderSide: BorderSide(color: secondaryTextColor),
             ),
             hintText: 'Cari nama pembeli',
-            hintStyle: secondaryTextStyle,
+            hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
             prefixIcon: Icon(Icons.search, color: secondaryTextColor, size: 20,),
             suffixIcon: searchFilled
                 ? InkWell(

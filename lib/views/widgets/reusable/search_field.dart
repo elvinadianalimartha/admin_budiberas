@@ -36,7 +36,7 @@ class SearchField extends StatelessWidget {
                 decoration: InputDecoration.collapsed(
                     enabled: false,
                     hintText: hintText,
-                    hintStyle: secondaryTextStyle
+                    hintStyle: secondaryTextStyle.copyWith(fontSize: 14)
                 ),
               ),
             ),
