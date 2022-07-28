@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../../../theme.dart';
 
 class TransactionStatusLabel {
@@ -44,6 +45,20 @@ class TransactionStatusLabel {
     );
   }
 
+  Widget blueLabel(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        color: Colors.lightBlueAccent.withOpacity(0.2),
+      ),
+      child: Text(
+        text,
+        style: blueTextStyle.copyWith(fontSize: 12),
+      ),
+    );
+  }
+
   Widget greyLabel(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
@@ -71,9 +86,9 @@ class TransactionStatusLabel {
       case 'delivered':
         return yellowLabel('Sedang Diantar');
       case 'arrived':
-        return yellowLabel('Tiba di Tujuan');
+        return blueLabel('Tiba di Tujuan');
       case 'ready to take':
-        return yellowLabel('Siap Diambil');
+        return blueLabel('Siap Diambil');
       case 'done':
         return greenLabel('Selesai');
       default:
