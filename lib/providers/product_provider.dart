@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:budiberas_admin_9701/models/product_model.dart';
 import 'package:budiberas_admin_9701/services/product_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pusher_client/pusher_client.dart';
 
 class ProductProvider with ChangeNotifier{
   List<ProductModel> _products = [];
@@ -208,5 +210,42 @@ class ProductProvider with ChangeNotifier{
       print(e);
       return false;
     }
+  }
+
+  Future<void> pusherStock() async {
+    PusherClient pusher;
+    Channel channel;
+    pusher = PusherClient('2243680746c2e59ee156', PusherOptions(cluster: 'ap1'));
+
+    channel = pusher.subscribe('stock-updated');
+
+    channel.bind('App\\Events\\StockUpdated', (event) {
+      print(event!.data);
+      final data = jsonDecode(event.data!);
+
+      var productIdToUpdate = int.parse(data['productId'].toString());
+
+      _products.where(
+              (product) => product.id == productIdToUpdate
+      ).first.stock = data['stockQty'];
+      notifyListeners();
+    });
+  }
+
+  Future<void> pusherProductStatus() async {
+    PusherClient pusher;
+    Channel channel;
+    pusher = PusherClient('2243680746c2e59ee156', PusherOptions(cluster: 'ap1'));
+
+    channel = pusher.subscribe('product-status');
+
+    channel.bind('App\\Events\\ProductStatusUpdated', (event) {
+      print(event!.data);
+      final data = jsonDecode(event.data!);
+
+      //update data status sesuai dgn id yg dituju
+      _products.where((e) => e.id == int.parse(data['productId'].toString())).first.stockStatus = data['productStatus'];
+      notifyListeners();
+    });
   }
 }

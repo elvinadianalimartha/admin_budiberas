@@ -34,7 +34,12 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   getInit() async {
-    await Provider.of<ProductProvider>(context, listen: false).getProducts();
+    await Future.wait([
+      Provider.of<ProductProvider>(context, listen: false).getProducts(),
+      Provider.of<ProductProvider>(context, listen: false).pusherStock(),
+      Provider.of<ProductProvider>(context, listen: false).pusherProductStatus(),
+    ]);
+
   }
 
   @override
@@ -84,7 +89,7 @@ class _ProductPageState extends State<ProductPage> {
                   borderSide: BorderSide(color: secondaryTextColor),
                 ),
                 hintText: 'Cari nama produk',
-                hintStyle: secondaryTextStyle,
+                hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
                 prefixIcon: Icon(Icons.search, color: secondaryTextColor, size: 20,),
                 suffixIcon: statusFilled
                     ? InkWell(
