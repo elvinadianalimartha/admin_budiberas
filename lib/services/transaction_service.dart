@@ -8,7 +8,7 @@ import '../models/transaction_model.dart';
 class TransactionService {
   String baseUrl = constants.baseUrl;
 
-  Future<List<TransactionModel>> getTransactions({String? shippingType}) async {
+  Future<List<TransactionModel>> getTransactions({String? shippingType, String? searchQuery}) async {
     var url = '$baseUrl/transactionsAdmin';
     var headers = {
       'Content-Type': 'application/json',
@@ -16,6 +16,7 @@ class TransactionService {
 
     Map<String, dynamic> qParams = {
       'shippingType': shippingType?.toLowerCase(),
+      'searchQuery': searchQuery?.toLowerCase(),
     };
 
     var response = await http.get(

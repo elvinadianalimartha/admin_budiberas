@@ -12,6 +12,11 @@ class TransactionProvider with ChangeNotifier{
 
   List<TransactionModel> get transactions => _transactions;
 
+  set transactions(List<TransactionModel> value) {
+    _transactions = value;
+    notifyListeners();
+  }
+
   bool loadingGetData = false;
 
   set carts(List<TransactionModel> value) {
@@ -19,13 +24,14 @@ class TransactionProvider with ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> getTransactions({String? shippingType}) async{
+  Future<void> getTransactions({String? shippingType, String? searchQuery}) async{
     loadingGetData = true;
     try {
-      List<TransactionModel> transactions = await TransactionService().getTransactions(shippingType: shippingType);
+      List<TransactionModel> transactions = await TransactionService().getTransactions(shippingType: shippingType, searchQuery: searchQuery);
       _transactions = transactions;
     } catch (e) {
       print(e);
+      _transactions = [];
     }
     loadingGetData = false;
     notifyListeners();
@@ -55,7 +61,7 @@ class TransactionProvider with ChangeNotifier{
       print(event!.data);
       final data = jsonDecode(event.data!);
 
-      if(checkIDTransactionExist(int.parse(data['transId']))) {
+      if(checkIDTransactionExist(int.parse(data['transId'].toString()))) {
         //update data status sesuai dgn id yg dituju
         _transactions.where(
           (e) => e.id == int.parse(data['transId'].toString())
