@@ -5,6 +5,7 @@ import 'package:budiberas_admin_9701/providers/incoming_stock_provider.dart';
 import 'package:budiberas_admin_9701/providers/out_stock_provider.dart';
 import 'package:budiberas_admin_9701/providers/page_provider.dart';
 import 'package:budiberas_admin_9701/providers/product_provider.dart';
+import 'package:budiberas_admin_9701/providers/report_provider.dart';
 import 'package:budiberas_admin_9701/providers/shifting_stock_provider.dart';
 import 'package:budiberas_admin_9701/providers/transaction_provider.dart';
 import 'package:budiberas_admin_9701/theme.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => OutStockProvider(),),
         ChangeNotifierProvider(create: (context) => ShiftingStockProvider(),),
         ChangeNotifierProvider(create: (context) => TransactionProvider()),
+        ChangeNotifierProvider(create: (context) => ReportProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
