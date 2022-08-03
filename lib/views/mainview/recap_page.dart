@@ -319,7 +319,7 @@ class _RecapPageState extends State<RecapPage> {
             ReportOptions(
                 text: 'Laporan Penjualan Bulanan',
                 onTap: () {
-
+                  Navigator.pushNamed(context, '/monthly-report');
                 }
             ),
             const SizedBox(height: 20,),
