@@ -3,7 +3,7 @@ import 'package:budiberas_admin_9701/models/shift_destination_model.dart';
 class ShiftStockModel{
   late int id;
   late String sourceProductName;
-  late int sourceProductSize;
+  late double sourceProductSize;
   String? isDeletedSourceProduct;
   late DateTime shiftingDate;
   late String shiftingTime;
@@ -24,7 +24,7 @@ class ShiftStockModel{
   ShiftStockModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     sourceProductName = json['product']['product_name'];
-    sourceProductSize = int.parse(json['product']['size'].toString());
+    sourceProductSize = double.parse(json['product']['size'].toString());
     isDeletedSourceProduct = json['product']['deleted_at'];
     shiftingDate = DateTime.tryParse(json['shifting_date'])!;
     shiftingTime = json['shifting_time'];
