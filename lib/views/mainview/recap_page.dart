@@ -326,14 +326,14 @@ class _RecapPageState extends State<RecapPage> {
             ReportOptions(
                 text: 'Laporan Penjualan Tahunan',
                 onTap: () {
-
+                  Navigator.pushNamed(context, '/annual-report');
                 }
             ),
             const SizedBox(height: 20,),
             ReportOptions(
                 text: 'Laporan Sisa Stok',
                 onTap: () {
-
+                  Navigator.pushNamed(context, '/remaining-stock-report');
                 }
             )
           ],

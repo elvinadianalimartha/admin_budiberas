@@ -1,4 +1,6 @@
+import 'package:budiberas_admin_9701/models/report_annual_model.dart';
 import 'package:budiberas_admin_9701/models/report_monthly_model.dart';
+import 'package:budiberas_admin_9701/models/report_remaining_stock_model.dart';
 import 'package:budiberas_admin_9701/models/report_soldout_model.dart';
 import 'package:budiberas_admin_9701/services/report_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -100,6 +102,65 @@ class ReportProvider with ChangeNotifier{
       _monthlySalesDetail = [];
     }
     loadingMonthly = false;
+    notifyListeners();
+  }
+
+  //========================= PENJUALAN TAHUNAN ================================
+  List<ReportAnnualModel> _annualSales = [];
+
+  List<ReportAnnualModel> get annualSales => _annualSales;
+
+  set annualSales(List<ReportAnnualModel> value) {
+    _annualSales = value;
+    notifyListeners();
+  }
+
+  bool loadingAnnual = false;
+  int totalAnnualOmzet = 0;
+  double totalTax = 0.0;
+
+  Future<void> reportAnnualSales({required String chosenYear}) async{
+    loadingAnnual = true;
+    try {
+      var reportAnnualSalesResult = await ReportService().reportAnnualSales(chosenYear: chosenYear);
+
+      totalAnnualOmzet = reportAnnualSalesResult['totalOmzet'];
+      totalTax = reportAnnualSalesResult['totalTax'];
+
+      List<ReportAnnualModel> detail = reportAnnualSalesResult['annualSalesDetail'];
+      _annualSales = detail;
+    } catch (e) {
+      print(e);
+      _annualSales = [];
+      totalAnnualOmzet = 0;
+      totalTax = 0.0;
+    }
+    loadingAnnual = false;
+    notifyListeners();
+  }
+
+  //=========================== LAPORAN SISA STOK ==============================
+  List<ReportRemainingStockModel> _remainingStocks = [];
+
+  List<ReportRemainingStockModel> get remainingStocks => _remainingStocks;
+
+  set remainingStocks(List<ReportRemainingStockModel> value) {
+    _remainingStocks = value;
+    notifyListeners();
+  }
+
+  bool loadingRemainingStock = false;
+
+  Future<void> reportRemainingStock({required String chosenDate}) async{
+    loadingRemainingStock = true;
+    try{
+      List<ReportRemainingStockModel> remainingStocksData = await ReportService().reportRemainingStock(chosenDate: chosenDate);
+      _remainingStocks = remainingStocksData;
+    } catch(e) {
+      print(e);
+      _remainingStocks = [];
+    }
+    loadingRemainingStock = false;
     notifyListeners();
   }
 }
