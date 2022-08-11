@@ -7,6 +7,7 @@ import 'package:budiberas_admin_9701/providers/page_provider.dart';
 import 'package:budiberas_admin_9701/providers/product_provider.dart';
 import 'package:budiberas_admin_9701/providers/report_provider.dart';
 import 'package:budiberas_admin_9701/providers/shifting_stock_provider.dart';
+import 'package:budiberas_admin_9701/providers/shipping_rate_provider.dart';
 import 'package:budiberas_admin_9701/providers/transaction_provider.dart';
 import 'package:budiberas_admin_9701/theme.dart';
 import 'package:budiberas_admin_9701/views/form/add_product.dart';
@@ -17,6 +18,7 @@ import 'package:budiberas_admin_9701/views/management/incoming_stock_page.dart';
 import 'package:budiberas_admin_9701/views/management/product_page.dart';
 import 'package:budiberas_admin_9701/views/management/return_to_supplier_page.dart';
 import 'package:budiberas_admin_9701/views/management/shift_stock_page.dart';
+import 'package:budiberas_admin_9701/views/management/shipping_rate_page.dart';
 import 'package:budiberas_admin_9701/views/report/annual_report.dart';
 import 'package:budiberas_admin_9701/views/report/monthly_report.dart';
 import 'package:budiberas_admin_9701/views/report/remaining_stock_report.dart';
@@ -47,6 +49,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ShiftingStockProvider(),),
         ChangeNotifierProvider(create: (context) => TransactionProvider()),
         ChangeNotifierProvider(create: (context) => ReportProvider()),
+        ChangeNotifierProvider(create: (context) => ShippingRateProvider())
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -79,6 +82,7 @@ class MyApp extends StatelessWidget {
           '/monthly-report': (context) => MonthlyReportPage(),
           '/annual-report': (context) => AnnualReportPage(),
           '/remaining-stock-report': (context) => RemainingStockReportPage(),
+          '/shipping-rate-page': (context) => ShippingRatePage()
         },
       ),
     );
