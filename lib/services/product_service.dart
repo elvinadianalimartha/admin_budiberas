@@ -45,9 +45,13 @@ class ProductService{
     required int canBeRetailed,
     List<File>? productGalleries,
   }) async {
-
     var url = '$baseUrl/product';
-    var headers = {'Content-Type': 'multipart/form-data'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': token,
+    };
 
     var body = {
       'category_id': categoryId.toString(),
@@ -92,7 +96,12 @@ class ProductService{
     int? canBeRetailed,
   }) async {
     var url = '$baseUrl/product/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'category_id': categoryId,
       'product_name': productName,
@@ -122,7 +131,11 @@ class ProductService{
     String stockStatus = '',
   }) async {
     var url = '$baseUrl/statusProduct/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'stock_status': stockStatus,
     });
@@ -147,7 +160,12 @@ class ProductService{
     double price = 0,
   }) async {
     var url = '$baseUrl/productPrice/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'price': price,
     });
@@ -171,7 +189,12 @@ class ProductService{
     int id = 0,
   }) async {
     var url = '$baseUrl/product/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
       Uri.parse(url),
@@ -191,7 +214,12 @@ class ProductService{
     required int id,
   }) async {
     var url = '$baseUrl/productInTransaction/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.get(
       Uri.parse(url),

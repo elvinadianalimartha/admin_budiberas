@@ -10,8 +10,10 @@ class TransactionService {
 
   Future<List<TransactionModel>> getTransactions({String? shippingType, String? searchQuery}) async {
     var url = '$baseUrl/transactionsAdmin';
+    String token = await constants.getTokenAdmin();
     var headers = {
       'Content-Type': 'application/json',
+      'Authorization': token,
     };
 
     Map<String, dynamic> qParams = {
@@ -45,9 +47,11 @@ class TransactionService {
     required String newStatus,
   }) async {
     var url = '$baseUrl/updateStatus/$transactionId';
+    String token = await constants.getTokenAdmin();
 
     var headers = {
       'Content-Type': 'application/json',
+      'Authorization': token,
     };
 
     var body = jsonEncode({

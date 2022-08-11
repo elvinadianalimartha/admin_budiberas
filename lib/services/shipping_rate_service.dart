@@ -40,7 +40,12 @@ class ShippingRateService {
     required double shippingPrice
   }) async {
     var url = '$baseUrl/specialShippingRates';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'max_distance': maxDistance,
       'min_order_price': minOrderPrice,
@@ -69,7 +74,12 @@ class ShippingRateService {
     required int shippingPrice
   }) async {
     var url = '$baseUrl/shippingRates/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'max_distance': maxDistance,
       'min_order_price': minOrderPrice,
@@ -95,7 +105,12 @@ class ShippingRateService {
     required int id,
   }) async {
     var url = '$baseUrl/shippingRates/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
       Uri.parse(url),

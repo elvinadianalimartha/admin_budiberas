@@ -9,9 +9,12 @@ class OutStockService {
 
   Future<List<OutStockModel>> getOutStock() async {
     var url = outStockUrl;
+    String token = await constants.getTokenAdmin();
+
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     var response = await http.get(
@@ -38,7 +41,12 @@ class OutStockService {
 
   Future<int> getMaxOutQty(int id) async {
     var url = '${constants.baseUrl}/maxOutQty/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.get(
       Uri.parse(url),
@@ -56,7 +64,12 @@ class OutStockService {
     String outStatus = 'Retur ke supplier',
   }) async {
     var url = outStockUrl;
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'product_id': productId,
       'quantity': quantity,
@@ -82,7 +95,12 @@ class OutStockService {
     int id = 0,
   }) async {
     var url = '$outStockUrl/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
       Uri.parse(url),
@@ -103,7 +121,12 @@ class OutStockService {
     required int quantity,
   }) async {
     var url = '$outStockUrl/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'quantity': quantity
     });

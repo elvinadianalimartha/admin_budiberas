@@ -35,7 +35,12 @@ class CategoryService{
     String category_name = '',
   }) async {
     var url = '$baseUrl/category';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'category_name': category_name,
     });
@@ -60,7 +65,12 @@ class CategoryService{
     String category_name = '',
   }) async {
     var url = '$baseUrl/category/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'category_name': category_name,
     });
@@ -84,7 +94,12 @@ class CategoryService{
     int id = 0,
   }) async {
     var url = '$baseUrl/category/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
         Uri.parse(url),

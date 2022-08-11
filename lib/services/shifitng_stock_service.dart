@@ -9,9 +9,11 @@ class ShiftingStockService {
 
   Future<List<ShiftStockModel>> getShiftStock() async {
     var url = '$baseUrl/shiftStock';
+    String token = await constants.getTokenAdmin();
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     var response = await http.get(
@@ -43,7 +45,11 @@ class ShiftingStockService {
     required int destQty,
   }) async {
     var url = '$baseUrl/shiftingStock';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'product_id': sourceProductId,
       'shiftStockDestination': destProductId,
@@ -70,7 +76,11 @@ class ShiftingStockService {
     required int id,
   }) async {
     var url = '$baseUrl/cancelShiftStock/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
       Uri.parse(url),

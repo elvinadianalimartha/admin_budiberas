@@ -10,9 +10,12 @@ class GalleryProductService{
 
   Future<List<GalleryModel>> getPhotos(int productId) async{
     var url = '$baseUrl/productGallery/$productId';
+    String token = await constants.getTokenAdmin();
+
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     var response = await http.get(
@@ -42,7 +45,12 @@ class GalleryProductService{
     required File photoUrl,
   }) async {
     var url = '$baseUrl/productGallery/$productId';
-    var headers = {'Content-Type': 'multipart/form-data'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': token,
+    };
 
     var body = {
       'product_id': productId.toString(),
@@ -67,7 +75,12 @@ class GalleryProductService{
     required File photoUrl,
   }) async {
     var url = '$baseUrl/updatePhoto/$id';
-    var headers = {'Content-Type': 'multipart/form-data'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': token,
+    };
 
     var request = http.MultipartRequest('POST', Uri.parse(url))
       ..headers.addAll(headers)
@@ -86,7 +99,12 @@ class GalleryProductService{
     required int id,
   }) async {
     var url = '$baseUrl/productGallery/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
       Uri.parse(url),

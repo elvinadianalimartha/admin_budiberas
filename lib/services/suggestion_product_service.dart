@@ -25,8 +25,8 @@ class SuggestionProductService {
     if(response.statusCode == 200) {
       List products = jsonDecode(response.body)['data'];
 
-      return products.map((e) => ProductModel.fromJson(e)).where((user) {
-        final lowerName = user.name.toLowerCase();
+      return products.map((e) => ProductModel.fromJson(e)).where((product) {
+        final lowerName = product.name.toLowerCase();
         final lowerQuery = query.toLowerCase();
 
         return lowerName.contains(lowerQuery);
@@ -38,9 +38,12 @@ class SuggestionProductService {
 
   Future<List<ProductModel>> getAvailableStockProduct(String searchQuery) async{
     var url = '$baseUrl/availableStockProduct';
+    String token = await constants.getTokenAdmin();
+
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     var response = await http.get(
@@ -53,8 +56,8 @@ class SuggestionProductService {
     if(response.statusCode == 200) {
       List products = jsonDecode(response.body)['data'];
 
-      return products.map((e) => ProductModel.fromJson(e)).where((user) {
-        final lowerName = user.name.toLowerCase();
+      return products.map((e) => ProductModel.fromJson(e)).where((product) {
+        final lowerName = product.name.toLowerCase();
         final lowerQuery = searchQuery.toLowerCase();
 
         return lowerName.contains(lowerQuery);
@@ -66,9 +69,12 @@ class SuggestionProductService {
 
   Future<List<ProductModel>> getCanBeRetailedProduct(String query) async{
     var url = '$baseUrl/retailedProduct';
+    String token = await constants.getTokenAdmin();
+
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     var response = await http.get(
@@ -81,8 +87,8 @@ class SuggestionProductService {
     if(response.statusCode == 200) {
       List products = jsonDecode(response.body)['data'];
 
-      return products.map((e) => ProductModel.fromJson(e)).where((user) {
-        final lowerName = user.name.toLowerCase();
+      return products.map((e) => ProductModel.fromJson(e)).where((product) {
+        final lowerName = product.name.toLowerCase();
         final lowerQuery = query.toLowerCase();
 
         return lowerName.contains(lowerQuery);
@@ -97,9 +103,12 @@ class SuggestionProductService {
     required int sourceProductId,
   }) async{
     var url = '$baseUrl/destinationProduct/$sourceProductId';
+    String token = await constants.getTokenAdmin();
+
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     var response = await http.get(
@@ -112,8 +121,8 @@ class SuggestionProductService {
     if(response.statusCode == 200) {
       List products = jsonDecode(response.body)['data'];
 
-      return products.map((e) => ProductModel.fromJson(e)).where((user) {
-        final lowerName = user.name.toLowerCase();
+      return products.map((e) => ProductModel.fromJson(e)).where((product) {
+        final lowerName = product.name.toLowerCase();
         final lowerQuery = query!.toLowerCase();
 
         return lowerName.contains(lowerQuery);

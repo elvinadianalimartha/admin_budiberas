@@ -9,9 +9,12 @@ class IncomingStockService{
 
   Future<List<IncomingStockModel>> getIncomingStock({String? status}) async {
     var url = '$baseUrl/incomingStock';
+    String token = await constants.getTokenAdmin();
+
     var headers = {
       'Content-Type': 'application/json',
       'Connection': 'keep-alive',
+      'Authorization': token,
     };
 
     Map<String, dynamic> qParams = {
@@ -46,7 +49,12 @@ class IncomingStockService{
     String incomingStatus = '',
   }) async {
     var url = '$baseUrl/incomingStock';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'product_id': productId,
       'quantity': quantity,
@@ -72,7 +80,12 @@ class IncomingStockService{
     int id = 0,
   }) async {
     var url = '$baseUrl/incomingStock/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.delete(
       Uri.parse(url),
@@ -93,7 +106,12 @@ class IncomingStockService{
     required int quantity,
   }) async {
     var url = '$baseUrl/incomingStock/$id';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
     var body = jsonEncode({
       'quantity': quantity
     });

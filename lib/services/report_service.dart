@@ -14,7 +14,12 @@ class ReportService {
 
   Future<int> countNewOrder() async {
     var url = '$baseUrl/countNewOrder';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.get(
         Uri.parse(url),
@@ -32,7 +37,12 @@ class ReportService {
 
   Future<List<ReportSoldOutModel>> reportSoldOut() async{
     var url = '$baseUrl/soldOutProduct';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.get(
         Uri.parse(url),
@@ -57,7 +67,12 @@ class ReportService {
 
   Future reportDailySales() async{
     var url = '$baseUrl/reportDailySales';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     var response = await http.get(
         Uri.parse(url),
@@ -88,7 +103,12 @@ class ReportService {
 
   Future reportMonthlySales({required String month, required String year}) async{
     var url = '$baseUrl/reportMonthlySales';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     Map<String, dynamic> qParams = {
       'month': month,
@@ -124,7 +144,12 @@ class ReportService {
 
   Future reportAnnualSales({required String chosenYear}) async{
     var url = '$baseUrl/reportAnualSales';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     Map<String, dynamic> qParams = {
       'chosen_year': chosenYear,
@@ -161,7 +186,12 @@ class ReportService {
 
   Future reportRemainingStock({required String chosenDate}) async{
     var url = '$baseUrl/reportRemainingStock';
-    var headers = {'Content-Type': 'application/json'};
+    String token = await constants.getTokenAdmin();
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
 
     Map<String, dynamic> qParams = {
       'chosen_date': chosenDate,
