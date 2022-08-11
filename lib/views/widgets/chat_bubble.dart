@@ -11,21 +11,24 @@ class ChatBubble extends StatelessWidget {
   final String text;
   final bool isSender; //if true, berarti pengirim. if false penerima
   final ProductModel? product;
+  final DateTime createdAt;
 
   ChatBubble({
     required this.isSender,
     this.text = '',
     this.product,
+    required this.createdAt,
   });
 
   @override
   Widget build(BuildContext context) {
     var formatter = NumberFormat.decimalPattern('id');
+    String formattedDate = DateFormat('dd-MM-yyyy HH:mm', 'id').format(createdAt);
     
     Widget productPreview(){
       return Container(
         width: 240,
-        margin: const EdgeInsets.only(bottom: 5),
+        margin: const EdgeInsets.only(bottom: 3),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSender ? fourthColor.withOpacity(0.8) : formColor,
@@ -97,9 +100,11 @@ class ChatBubble extends StatelessWidget {
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.6, //spy ukuran bubblenya max cm 60% dr ukuran layar
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                  padding: EdgeInsets.only(
+                    right: 16,
+                    left: 16,
+                    top: 12,
+                    bottom: 8,
                   ),
                   decoration: BoxDecoration(
                     color: isSender ? fourthColor.withOpacity(0.8) : Color(0xffEAEAF1),
@@ -110,9 +115,20 @@ class ChatBubble extends StatelessWidget {
                       bottomRight: const Radius.circular(12),
                     )
                   ),
-                  child: Text(
-                    text,
-                    style: primaryTextStyle,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        text,
+                        style: primaryTextStyle,
+                      ),
+                      SizedBox(height: 6,),
+                      Text(
+                        formattedDate,
+                        style: isSender ? priceTextStyle.copyWith(fontSize: 11) : secondaryTextStyle.copyWith(fontSize: 11),
+                      ),
+                    ],
                   ),
                 ),
               )

@@ -56,6 +56,7 @@ class _DetailChatPageState extends State<DetailChatPage> {
                   isSender: !message.isFromUser,
                   text: message.message,
                   product: message.product,
+                  createdAt: message.createdAt,
                 )
               ).toList(),
             );
@@ -131,14 +132,12 @@ class _DetailChatPageState extends State<DetailChatPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: primaryColor,
-        toolbarHeight: 80,
+        toolbarHeight: 65,
         title: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(
-                  widget.userImage
-                ),
+                backgroundImage: NetworkImage("https://ui-avatars.com/api/?background=random&name=${widget.userName}")
               ),
               const SizedBox(width: 20,),
               Flexible(
@@ -154,14 +153,14 @@ class _DetailChatPageState extends State<DetailChatPage> {
                       ),
                       maxLines: null,
                     ),
-                    const SizedBox(height: 2,),
-                    Text(
-                      'Aktif',
-                      style: whiteTextStyle.copyWith(
-                        fontSize: 14,
-                      ),
-                      maxLines: null,
-                    ),
+                    // const SizedBox(height: 2,),
+                    // Text(
+                    //   'Aktif',
+                    //   style: whiteTextStyle.copyWith(
+                    //     fontSize: 14,
+                    //   ),
+                    //   maxLines: null,
+                    // ),
                   ],
                 ),
               ),
