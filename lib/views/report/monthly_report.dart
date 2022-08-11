@@ -5,6 +5,7 @@ import 'package:budiberas_admin_9701/views/widgets/reusable/app_bar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -23,8 +24,8 @@ class MonthlyReportPage extends StatefulWidget {
 }
 
 class _MonthlyReportPageState extends State<MonthlyReportPage> {
-  var nowMonth = DateTime.now().month;
   late int _chosenMonth;
+  late String _currentYear;
 
   @override
   void initState() {
@@ -33,15 +34,14 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
   }
 
   getInit() async {
-    // var nowMonth = DateTime.now().month;
-    // print('bulan: $nowMonth');
-    _chosenMonth = nowMonth;
-    print(_chosenMonth);
-    await Provider.of<ReportProvider>(context, listen: false).reportMonthlySales(month: nowMonth);
+    _chosenMonth = DateTime.now().month;
+    _currentYear = DateTime.now().year.toString();
+    await Provider.of<ReportProvider>(context, listen: false).reportMonthlySales(month: _chosenMonth.toString(), year: _currentYear);
   }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController inputYear = TextEditingController(text: _currentYear);
     var formatter = NumberFormat.decimalPattern('id');
     ReportProvider reportProv = Provider.of<ReportProvider>(context);
 
@@ -89,14 +89,47 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
                 );
               }).toList(),
               onChanged: (value) {
-                var _intVal = int.parse(value.toString());
-                if(_intVal != _chosenMonth) {
+                if(value.toString() != _chosenMonth.toString()) {
                   _chosenMonth = int.parse(value.toString());
                   reportProv.loadingMonthly = true;
                   reportProv.monthlySalesDetail = [];
-                  reportProv.reportMonthlySales(month: _chosenMonth);
+                  reportProv.reportMonthlySales(month: _chosenMonth.toString(), year: _currentYear);
                 }
               }
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget chooseYear() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Tahun Laporan : ',
+            style: primaryTextStyle.copyWith(fontWeight: semiBold),
+          ),
+          const SizedBox(height: 8,),
+          SizedBox(
+            width: 100,
+            child: TextFormField(
+              controller: inputYear,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4),],
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: const EdgeInsets.all(12)
+              ),
+              onFieldSubmitted: (value) {
+                setState(() {
+                  _currentYear = value;
+                });
+                reportProv.reportMonthlySales(month: _chosenMonth.toString(), year: _currentYear);
+              },
             ),
           ),
         ],
@@ -202,7 +235,9 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
                 Image.asset('assets/empty-icon.png', width: MediaQuery.of(context).size.width/2.5,),
                 const SizedBox(height: 12,),
                 Text(
-                  'Belum ada transaksi di bulan ${listOfMonths.where((e) => e.id == _chosenMonth).first.name}',
+                  'Belum ada transaksi di bulan '
+                      '${listOfMonths.where((e) => e.id == _chosenMonth).first.name} '
+                      '$_currentYear',
                   style: primaryTextStyle.copyWith(fontSize: 16),
                 )
               ],
@@ -238,7 +273,16 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              chooseMonth(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  chooseMonth(),
+                  const SizedBox(width: 30,),
+                  Flexible(
+                    child: chooseYear(),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16,),
               totalOmzet(),
               const SizedBox(height: 16,),

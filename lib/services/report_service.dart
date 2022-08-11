@@ -86,12 +86,17 @@ class ReportService {
     }
   }
 
-  Future reportMonthlySales({required int month}) async{
-    var url = '$baseUrl/reportMonthlySales/$month';
+  Future reportMonthlySales({required String month, required String year}) async{
+    var url = '$baseUrl/reportMonthlySales';
     var headers = {'Content-Type': 'application/json'};
 
+    Map<String, dynamic> qParams = {
+      'month': month,
+      'year': year,
+    };
+
     var response = await http.get(
-        Uri.parse(url),
+        Uri.parse(url).replace(queryParameters: qParams),
         headers: headers
     );
 
@@ -122,7 +127,7 @@ class ReportService {
     var headers = {'Content-Type': 'application/json'};
 
     Map<String, dynamic> qParams = {
-      'chosen_year': chosenYear.toLowerCase(),
+      'chosen_year': chosenYear,
     };
 
     var response = await http.get(

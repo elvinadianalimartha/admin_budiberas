@@ -86,10 +86,10 @@ class ReportProvider with ChangeNotifier{
   bool loadingMonthly = false;
   int monthlyOmzet = 0;
 
-  Future<void> reportMonthlySales({required int month}) async{
+  Future<void> reportMonthlySales({required String month, required String year}) async{
     loadingMonthly = true;
     try{
-      var reportMonthlySalesResult = await ReportService().reportMonthlySales(month: month);
+      var reportMonthlySalesResult = await ReportService().reportMonthlySales(month: month, year: year);
 
       int omzet = reportMonthlySalesResult['monthlyOmzet'];
       monthlyOmzet = omzet;
