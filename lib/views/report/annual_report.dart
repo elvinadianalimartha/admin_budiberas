@@ -50,6 +50,7 @@ class _AnnualReportPageState extends State<AnnualReportPage> {
             child: TextFormField(
               controller: inputYear,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4),],
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 isCollapsed: true,
                 isDense: true,
