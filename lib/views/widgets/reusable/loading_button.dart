@@ -11,10 +11,14 @@ class LoadingButton extends StatelessWidget {
     return TextButton(
         onPressed: (){},
         style: TextButton.styleFrom(
-            backgroundColor: btnColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)
-            )
+          backgroundColor: btnColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)
+          ),
+          padding: const EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 12
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

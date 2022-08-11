@@ -12,6 +12,7 @@ class LineTextField extends StatefulWidget {
   final Widget? prefix;
   final BoxConstraints? prefixIconConstraints;
   final Widget? suffixIcon;
+  final BoxConstraints? suffixIconConstraints;
   final FocusNode? focusNode;
   final bool obscureText;
   final TextEditingController? controller;
@@ -28,6 +29,7 @@ class LineTextField extends StatefulWidget {
     this.prefix,
     this.suffixIcon,
     this.prefixIconConstraints,
+    this.suffixIconConstraints,
     this.focusNode,
     this.obscureText = false,
     this.controller,
@@ -56,8 +58,9 @@ class _LineTextFieldState extends State<LineTextField> {
         prefixIconConstraints: widget.prefixIconConstraints,
         prefix: widget.prefix,
         suffixIcon: widget.suffixIcon,
+        suffixIconConstraints: widget.suffixIconConstraints,
         hintText: widget.hintText,
-        hintStyle: secondaryTextStyle,
+        hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
       ),
       controller: widget.controller,
       validator: widget.validator,
