@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../theme.dart';
 
-class SearchField extends StatelessWidget {
+class SearchFieldWithCalendar extends StatelessWidget {
   final String hintText;
   final TextEditingController searchController;
   final VoidCallback resetField;
   final VoidCallback chooseDate;
 
-  const SearchField({
+  const SearchFieldWithCalendar({
     Key? key,
     required this.hintText,
     required this.searchController,

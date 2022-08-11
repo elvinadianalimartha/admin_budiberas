@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../theme.dart';
 import '../widgets/reusable/app_bar.dart';
-import '../widgets/reusable/search_field.dart';
+import '../widgets/reusable/search_field_calendar.dart';
 
 class ShiftingStockPage extends StatefulWidget {
   const ShiftingStockPage({Key? key}) : super(key: key);
@@ -55,7 +55,7 @@ class _ShiftingStockPageState extends State<ShiftingStockPage> {
     Widget search(){
       return Consumer<ShiftingStockProvider>(
         builder: (context, data, child){
-          return SearchField(
+          return SearchFieldWithCalendar(
             hintText: 'Cari histori per tanggal',
             searchController: searchController,
             resetField: () {
