@@ -157,12 +157,8 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Biaya khusus : ',
+                              'Biaya khusus (set jadi 0 jika gratis) : ',
                               style: primaryTextStyle,
-                            ),
-                            Text(
-                              'Set jadi 0 jika gratis',
-                              style: greyTextStyle,
                             ),
                             LineTextField(
                               inputFormatter: [FilteringTextInputFormatter.digitsOnly],
@@ -332,11 +328,11 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               children: [
                 TextSpan(
                   text: 'Biaya Standar : ',
-                  style: primaryTextStyle.copyWith(fontWeight: semiBold)
+                  style: primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 16)
                 ),
                 TextSpan(
                     text: 'Rp ${formatter.format(shippingRateProv.standardShippingRates.shippingPrice)}/km',
-                    style: primaryTextStyle
+                    style: primaryTextStyle.copyWith(fontSize: 16)
                 ),
               ]
             )
@@ -364,7 +360,7 @@ class _ShippingRatePageState extends State<ShippingRatePage> {
               ),
               Flexible(
                 child: SizedBox(
-                  width: 150,
+                  width: 200,
                   child: AddButton(
                     onClick: () {
                       showModalAddSpecial();

@@ -2,6 +2,7 @@ import 'package:budiberas_admin_9701/providers/shifting_stock_provider.dart';
 import 'package:budiberas_admin_9701/theme.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/cancel_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/done_button.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/table_data_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -163,82 +164,28 @@ class ShiftStockCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'Waktu pengalihan',
-                  style: primaryTextStyle,
-                ),
-                const SizedBox(width: 16,),
-                const Text(':'),
-                const SizedBox(width: 8,),
-                Flexible(
-                  child: Text(
-                    '$formattedDate | ${shiftStocks.shiftingTime}',
-                    style: primaryTextStyle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-              ],
+            TableDataWidget(
+              widthTitleBox: 150,
+              title: 'Waktu pengalihan',
+              value: '$formattedDate | ${shiftStocks.shiftingTime}'
             ),
             const SizedBox(height: 4,),
-            Row(
-              children: [
-                Text(
-                  'Produk asal',
-                  style: primaryTextStyle,
-                ),
-                const SizedBox(width: 63,),
-                const Text(':'),
-                const SizedBox(width: 8,),
-                Flexible(
-                  child: Text(
-                    shiftStocks.sourceProductName,
-                    style: primaryTextStyle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-              ],
+            TableDataWidget(
+              widthTitleBox: 150,
+              title: 'Produk asal',
+              value: shiftStocks.sourceProductName
             ),
             const SizedBox(height: 4,),
-            Row(
-              children: [
-                Text(
-                  'Jumlah pengalihan',
-                  style: primaryTextStyle,
-                ),
-                const SizedBox(width: 8,),
-                const Text(':'),
-                const SizedBox(width: 8,),
-                Flexible(
-                  child: Text(
-                    '${shiftStocks.quantity.toString()} buah',
-                    style: primaryTextStyle,
-                  ),
-                )
-              ],
+            TableDataWidget(
+              widthTitleBox: 150,
+              title: 'Jumlah pengalihan',
+              value: '${shiftStocks.quantity.toString()} buah'
             ),
             const SizedBox(height: 4,),
-            Row(
-              children: [
-                Text(
-                  'Dialihkan ke',
-                  style: primaryTextStyle,
-                ),
-                const SizedBox(width: 61,),
-                const Text(':'),
-                const SizedBox(width: 8,),
-                Flexible(
-                  child: Text(
-                    shiftStocks.shiftStockDestination.destProductName,
-                    style: primaryTextStyle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-              ],
+            TableDataWidget(
+              widthTitleBox: 150,
+              title: 'Dialihkan ke',
+              value: shiftStocks.shiftStockDestination.destProductName
             ),
             const SizedBox(height: 8),
             RichText(text:

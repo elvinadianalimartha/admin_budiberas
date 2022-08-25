@@ -136,7 +136,7 @@ class _ReturnToSupplierPageState extends State<ReturnToSupplierPage> {
                                 controller: chooseProductController,
                                 decoration: InputDecoration(
                                   hintText: 'Pilih/cari produk',
-                                  hintStyle: secondaryTextStyle,
+                                  hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
                                 ),
                                 onEditingComplete: (){},
                             ),

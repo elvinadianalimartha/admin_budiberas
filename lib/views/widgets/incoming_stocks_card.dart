@@ -4,6 +4,7 @@ import 'package:budiberas_admin_9701/views/widgets/reusable/delete_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/done_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/edit_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/line_text_field.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/table_data_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -242,68 +243,19 @@ class IncomingStocksCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      'Produk',
-                      style: primaryTextStyle.copyWith(
-                        fontWeight: medium,
-                      ),
-                    ),
-                    const SizedBox(width: 80,),
-                    const Text(':'),
-                    const SizedBox(width: 8,),
-                    Flexible(
-                      child: Text(
-                        incomingStocks.product,
-                        style: primaryTextStyle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                TableDataWidget(
+                    title: 'Produk',
+                    value: incomingStocks.product
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      'Waktu Masuk',
-                      style: primaryTextStyle.copyWith(
-                        fontWeight: medium,
-                      ),
-                    ),
-                    const SizedBox(width: 36,),
-                    const Text(':'),
-                    const SizedBox(width: 8,),
-                    Flexible(
-                      child: Text(
-                        '$formattedDate | ${incomingStocks.incomingTime}',
-                        style: primaryTextStyle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                TableDataWidget(
+                    title: 'Waktu Masuk',
+                    value: '$formattedDate | ${incomingStocks.incomingTime}'
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      'Jumlah Masuk',
-                      style: primaryTextStyle.copyWith(
-                        fontWeight: medium,
-                      ),
-                    ),
-                    const SizedBox(width: 28,),
-                    const Text(':'),
-                    const SizedBox(width: 8,),
-                    Text(
-                      '${incomingStocks.quantity} buah',
-                      style: primaryTextStyle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                TableDataWidget(
+                    title: 'Jumlah Masuk',
+                    value: '${incomingStocks.quantity} buah',
                 ),
               ],
             ),

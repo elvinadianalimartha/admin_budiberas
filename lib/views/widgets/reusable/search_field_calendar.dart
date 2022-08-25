@@ -30,7 +30,7 @@ class SearchFieldWithCalendar extends StatelessWidget {
           children: [
             Expanded(
               child: TextFormField(
-                style: primaryTextStyle,
+                style: primaryTextStyle.copyWith(fontSize: 14),
                 controller: searchController,
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration.collapsed(

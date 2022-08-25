@@ -117,7 +117,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                     hideSuggestionsOnKeyboardHide: false,
                     debounceDuration: const Duration(milliseconds: 500),
                     textFieldConfiguration: TextFieldConfiguration(
-                        style: primaryTextStyle,
+                        style: primaryTextStyle.copyWith(fontSize: 14),
                         controller: sourceProductController,
                         decoration: InputDecoration(
                           isCollapsed: true,
@@ -130,7 +130,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                           contentPadding: const EdgeInsets.all(16),
                           fillColor: formColor,
                           hintText: 'Pilih/cari produk asal',
-                          hintStyle: secondaryTextStyle,
+                          hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
                         ),
                         onEditingComplete: (){
                           formKeys[0].currentState!.validate()
@@ -290,7 +290,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                 hideSuggestionsOnKeyboardHide: false,
                 debounceDuration: const Duration(milliseconds: 500),
                 textFieldConfiguration: TextFieldConfiguration(
-                    style: primaryTextStyle,
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                     controller: destinationProductController,
                     decoration: InputDecoration(
                       isCollapsed: true,
@@ -303,7 +303,7 @@ class _FormShiftingStockState extends State<FormShiftingStock> {
                       contentPadding: const EdgeInsets.all(16),
                       fillColor: formColor,
                       hintText: 'Pilih/cari produk tujuan pengalihan',
-                      hintStyle: secondaryTextStyle,
+                      hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
                     ),
                   onEditingComplete: () {
                       formKeys[2].currentState!.validate()

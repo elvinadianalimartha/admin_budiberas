@@ -200,7 +200,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
             text1: detailMonthlySale.productName,
             text2: '${detailMonthlySale.qtySold}',
             text3: 'Rp ${formatter.format(detailMonthlySale.totalSold)}',
-            textStyle: greyTextStyle
+            textStyle: greyTextStyle.copyWith(fontSize: 14)
         ),
       );
     }
@@ -211,7 +211,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
           text1: monthlySale.categoryName,
           text2: '${monthlySale.qtySold}',
           text3: 'Rp ${formatter.format(monthlySale.totalSold)}',
-          textStyle: primaryTextStyle
+          textStyle: primaryTextStyle.copyWith(fontSize: 14)
         ),
         children: monthlySale.detailProduct.map(detailBuildTile).toList(),
       );
@@ -239,6 +239,7 @@ class _MonthlyReportPageState extends State<MonthlyReportPage> {
                       '${listOfMonths.where((e) => e.id == _chosenMonth).first.name} '
                       '$_currentYear',
                   style: primaryTextStyle.copyWith(fontSize: 16),
+                  textAlign: TextAlign.center,
                 )
               ],
             )

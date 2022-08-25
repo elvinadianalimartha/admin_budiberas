@@ -44,7 +44,7 @@ class _RemainingStockReportPageState extends State<RemainingStockReportPage> {
           children: [
             Expanded(
               child: TextFormField(
-                style: primaryTextStyle,
+                style: primaryTextStyle.copyWith(fontSize: 14),
                 controller: searchController,
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration.collapsed(
@@ -150,7 +150,7 @@ class _RemainingStockReportPageState extends State<RemainingStockReportPage> {
           ),
           const SizedBox(width: 30,),
           SizedBox(
-            width: 70,
+            width: 80,
             child: Text(
               text2,
               style: textStyle,

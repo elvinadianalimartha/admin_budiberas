@@ -4,6 +4,7 @@ import 'package:budiberas_admin_9701/views/widgets/reusable/delete_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/done_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/edit_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/line_text_field.dart';
+import 'package:budiberas_admin_9701/views/widgets/reusable/table_data_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -149,12 +150,8 @@ class SpecialRateCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Biaya khusus : ',
+                                'Biaya khusus (set jadi 0 jika gratis) : ',
                                 style: primaryTextStyle,
-                              ),
-                              Text(
-                                'Set jadi 0 jika gratis',
-                                style: greyTextStyle,
                               ),
                               LineTextField(
                                 inputFormatter: [FilteringTextInputFormatter.digitsOnly],
@@ -228,7 +225,7 @@ class SpecialRateCard extends StatelessWidget {
       return showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          insetPadding: const EdgeInsets.all(40),
+          insetPadding: const EdgeInsets.all(50),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20)
           ),
@@ -255,19 +252,19 @@ class SpecialRateCard extends StatelessWidget {
                   children: [
                     Text(
                       'Jarak max: $formattedMaxDistance km',
-                      style: greyTextStyle, textAlign: TextAlign.left,
+                      style: greyTextStyle.copyWith(fontSize: 14), textAlign: TextAlign.left,
                     ),
                     Text(
                       'Min. pembelian: Rp ${formatter.format(specialShippingRate.minOrderPrice)}',
-                      style: greyTextStyle, textAlign: TextAlign.left,
+                      style: greyTextStyle.copyWith(fontSize: 14), textAlign: TextAlign.left,
                     ),
                     Text(
                       'Biaya yang dikenakan: Rp ${formatter.format(specialShippingRate.shippingPrice)}',
-                      style: greyTextStyle, textAlign: TextAlign.left,
+                      style: greyTextStyle.copyWith(fontSize: 14), textAlign: TextAlign.left,
                     ),
                   ],
                 ),
-                SizedBox(height: defaultMargin,),
+                SizedBox(height: 30,),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -287,37 +284,6 @@ class SpecialRateCard extends StatelessWidget {
             ),
           ),
         ),
-      );
-    }
-
-    Widget tableSpecialRates({
-      required String title,
-      required String value,
-    }) {
-      return Row(
-        children: [
-          SizedBox(
-            width: 140,
-            child: Text(
-              title,
-              style: primaryTextStyle.copyWith(
-                fontWeight: medium,
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(':'),
-          ),
-          Flexible(
-            child: Text(
-              value,
-              style: primaryTextStyle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
       );
     }
 
@@ -341,17 +307,20 @@ class SpecialRateCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                tableSpecialRates(
-                    title: 'Jarak max',
-                    value: '$formattedMaxDistance km'
+                TableDataWidget(
+                  widthTitleBox: 150,
+                  title: 'Jarak maksimal',
+                  value: '$formattedMaxDistance km'
                 ),
                 const SizedBox(height: 10),
-                tableSpecialRates(
+                TableDataWidget(
+                  widthTitleBox: 150,
                   title: 'Pembelian minimal',
                   value: 'Rp ${formatter.format(specialShippingRate.minOrderPrice)}',
                 ),
                 const SizedBox(height: 10),
-                tableSpecialRates(
+                TableDataWidget(
+                  widthTitleBox: 150,
                   title: 'Biaya',
                   value: specialShippingRate.shippingPrice == 0
                       ? 'Gratis'

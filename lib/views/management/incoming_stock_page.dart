@@ -166,13 +166,13 @@ class _IncomingStockState extends State<IncomingStock> {
                             hideSuggestionsOnKeyboardHide: false,
                             debounceDuration: const Duration(milliseconds: 500),
                             textFieldConfiguration: TextFieldConfiguration(
-                                style: primaryTextStyle,
+                                style: primaryTextStyle.copyWith(fontSize: 14),
                                 controller: statusName == 'Retur dari pembeli'
                                     ? chooseReturnProductController
                                     : chooseAddedProductController,
                                 decoration: InputDecoration(
                                   hintText: 'Pilih/cari produk',
-                                  hintStyle: secondaryTextStyle,
+                                  hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
                                 ),
                               onEditingComplete: (){} //NOTE: tombol done pd keyboard tdk bisa diklik spy owner hanya bisa pilih yg ada di dropdown
                             ),
