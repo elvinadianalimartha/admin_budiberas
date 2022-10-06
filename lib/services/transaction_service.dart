@@ -8,7 +8,12 @@ import '../models/transaction_model.dart';
 class TransactionService {
   String baseUrl = constants.baseUrl;
 
-  Future<List<TransactionModel>> getTransactions({String? shippingType, String? searchQuery}) async {
+  Future getTransactions({
+    String? shippingType,
+    String? searchQuery,
+    required int page,
+    List<String>? status,
+  }) async {
     var url = '$baseUrl/transactionsAdmin';
     String token = await constants.getTokenAdmin();
     var headers = {
@@ -19,7 +24,14 @@ class TransactionService {
     Map<String, dynamic> qParams = {
       'shippingType': shippingType?.toLowerCase(),
       'searchQuery': searchQuery?.toLowerCase(),
+      'page': page.toString(),
     };
+
+    if(status != null) {
+      for(int i=0; i < status.length; i++) {
+        qParams.addAll({'status[$i]': status[i]});
+      }
+    }
 
     var response = await http.get(
       Uri.parse(url).replace(queryParameters: qParams),
@@ -30,11 +42,17 @@ class TransactionService {
 
     if(response.statusCode == 200) {
       List data = jsonDecode(response.body)['data']['data'];
-      List<TransactionModel> transactions = [];
+      int totalPageNumber = jsonDecode(response.body)['data']['last_page'];
 
+      List<TransactionModel> transactionData = [];
       for(var item in data) {
-        transactions.add(TransactionModel.fromJson(item));
+        transactionData.add(TransactionModel.fromJson(item));
       }
+
+      Map<String, dynamic> transactions = {
+        'data': transactionData,
+        'totalPage': totalPageNumber
+      };
 
       return transactions;
     } else {
