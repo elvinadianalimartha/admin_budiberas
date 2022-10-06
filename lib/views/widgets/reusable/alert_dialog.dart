@@ -39,7 +39,7 @@ class AlertDialogWidget extends StatelessWidget {
             ),
             SizedBox(height: defaultMargin,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: childrenList!
             )
           ],

@@ -52,7 +52,7 @@ class _LineTextFieldState extends State<LineTextField> {
       textInputAction: widget.actionKeyboard,
       obscureText: widget.obscureText,
       focusNode: widget.focusNode,
-      style: primaryTextStyle,
+      style: primaryTextStyle.copyWith(fontSize: 14),
       decoration: InputDecoration(
         prefixIcon: widget.prefixIcon,
         prefixIconConstraints: widget.prefixIconConstraints,

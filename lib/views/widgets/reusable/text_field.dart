@@ -19,6 +19,7 @@ class TextFormFieldWidget extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final bool readOnly;
   final void Function(String text)? onChanged;
+  final int? maxLines;
 
   const TextFormFieldWidget({
     Key? key,
@@ -36,6 +37,7 @@ class TextFormFieldWidget extends StatefulWidget {
     this.validator,
     this.readOnly = false,
     this.onChanged,
+    this.maxLines,
   }) : super(key: key);
 
   @override
@@ -54,7 +56,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
       textInputAction: widget.actionKeyboard,
       obscureText: widget.obscureText,
       focusNode: widget.focusNode,
-      style: primaryTextStyle,
+      style: primaryTextStyle.copyWith(fontSize: 14),
       decoration: InputDecoration(
         isCollapsed: true,
         isDense: true,
@@ -67,14 +69,14 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
         prefix: widget.prefix,
         suffixIcon: widget.suffixIcon,
         hintText: widget.hintText,
-        hintStyle: secondaryTextStyle,
+        hintStyle: secondaryTextStyle.copyWith(fontSize: 14),
         filled: true,
         fillColor: formColor,
         contentPadding: const EdgeInsets.all(16),
       ),
       controller: widget.controller,
       validator: widget.validator,
-      maxLines: null,
+      maxLines: widget.maxLines,
     );
   }
 }

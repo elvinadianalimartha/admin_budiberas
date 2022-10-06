@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import '../../../theme.dart';
 
 class LoadingButton extends StatelessWidget {
-  const LoadingButton({Key? key}) : super(key: key);
+  final String text;
+
+  const LoadingButton({
+    Key? key,
+    this.text = 'Menyimpan',
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class LoadingButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Menyimpan',
+              text,
               style: whiteTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: medium
