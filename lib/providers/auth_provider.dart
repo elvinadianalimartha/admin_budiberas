@@ -1,3 +1,4 @@
+import 'package:budiberas_admin_9701/services/notification_service.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../models/user_model.dart';
@@ -16,8 +17,8 @@ class AuthProvider with ChangeNotifier{
   String errorMessage = '';
 
   Future<bool> login({
-    String? email,
-    String? password
+    required String email,
+    required String password
   }) async {
     try {
       UserModel user = await AuthService().login(
@@ -35,9 +36,9 @@ class AuthProvider with ChangeNotifier{
     }
   }
 
-  Future<bool> logout(String token) async {
+  Future<bool> logout() async {
     try {
-      if(await AuthService().logout(token)) {
+      if(await AuthService().logout()) {
         return true;
       } else {
         return false;
@@ -45,6 +46,50 @@ class AuthProvider with ChangeNotifier{
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  Future<void> fetchDataUser(String token) async {
+    try {
+      UserModel user = await AuthService().fetchDataUser(
+        token: token,
+      );
+      _user = user; //berhasil fetch data by token yg disimpan di shared pref
+    }catch(e) {
+      print(e);
+    }
+  }
+
+  Future<bool> updateFcmToken({
+    required String token,
+    required int userId,
+    required String fcmToken,
+  }) async {
+    try {
+      if(await AuthService().updateFcmToken(
+        token: token,
+        userId: userId,
+        fcmToken: fcmToken,
+      )) {
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  String? fcmTokenUser;
+
+  Future<void> getFcmToken(int userId) async {
+    try {
+      String token = await NotificationService().getFcmTokenUser(userId: userId);
+      fcmTokenUser = token;
+    }catch(e) {
+      print(e);
+      fcmTokenUser = null;
     }
   }
 }
