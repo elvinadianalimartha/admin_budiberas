@@ -55,8 +55,6 @@ class _ManagementPageState extends State<ManagementPage> {
             },
           ),
           SizedBox(height: 5,),
-          ManagementOptionCard('Stok Keluar: Penjualan Offline'),
-          SizedBox(height: 5,),
           GestureDetector(
             child: ManagementOptionCard('Stok Keluar: Retur ke Supplier'),
             onTap: () {
@@ -72,21 +70,13 @@ class _ManagementPageState extends State<ManagementPage> {
           ),
 
           SizedBox(height: 30,),
-
-          Text(
-              'Filter',
-              style: secondaryTextStyle.copyWith(
-                fontWeight: medium,
-              )
-          ),
-          ManagementOptionCard('Kriteria Filter'),
         ],
       );
     }
 
     return Scaffold(
       appBar: customAppBar(
-          text: 'Kelola Produk, Stok, Filter'
+          text: 'Kelola Produk & Stok'
       ),
       body: content(),
     );
