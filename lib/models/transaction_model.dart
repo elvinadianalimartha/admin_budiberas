@@ -15,6 +15,7 @@ class TransactionModel {
   late List<TransactionDetailModel> details;
   late int countRemainingDetails;
   late String userName;
+  String? fcmToken;
 
   TransactionModel({
     required this.id,
@@ -35,6 +36,7 @@ class TransactionModel {
     required this.checkoutDate,
     required this.checkoutTime,
     required this.userName,
+    this.fcmToken,
   });
 
   TransactionModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class TransactionModel {
         .map<TransactionDetailModel>((detail) => TransactionDetailModel.fromJson(detail)).toList();
     countRemainingDetails = details.length - 1;
     userName = json['user']['name'];
+    fcmToken = json['user']['fcm_token'];
   }
 }
 

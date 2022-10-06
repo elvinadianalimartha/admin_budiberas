@@ -1,6 +1,8 @@
+import 'package:budiberas_admin_9701/services/notification_service.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/image_builder.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/trans_update_button.dart';
 import 'package:budiberas_admin_9701/views/widgets/reusable/transaction_status_label.dart';
+import 'package:budiberas_admin_9701/views/widgets/transaction_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -87,7 +89,7 @@ class TransactionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12,),
-              TransactionStatusLabel().labellingStatus(transactions.transactionStatus),
+              TransactionStatusLabel().labellingStatus(status: transactions.transactionStatus, fontSize: 11.5),
             ],
           ),
           transactions.shippingType.toLowerCase() == 'pesan antar'
@@ -161,8 +163,16 @@ class TransactionCard extends StatelessWidget {
 
     handleUpdateTransactionStatus({
       required String status,
+      required String notificationTitle,
+      String? notificationBody,
     }) async {
       if(await transactionProvider.updateStatusTransaction(id: transactions.id, newStatus: status)) {
+        NotificationService().sendFcm(
+            title: notificationTitle,
+            body: notificationBody,
+            fcmToken: transactions.fcmToken!
+        );
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Status transaksi berhasil diperbarui'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
         );
@@ -181,7 +191,8 @@ class TransactionCard extends StatelessWidget {
             onClick: () {
               //updateStatus to processed
               handleUpdateTransactionStatus(
-                  status: 'processed'
+                status: 'processed',
+                notificationTitle: 'Pesanan ${transactions.invoiceCode} sedang diproses'
               );
             },
           );
@@ -191,7 +202,13 @@ class TransactionCard extends StatelessWidget {
             onClick: () {
               //updateStatus to delivered or ready to take
               handleUpdateTransactionStatus(
-                  status: shippingType.toLowerCase() == 'pesan antar' ? 'delivered' : 'ready to take'
+                  status: shippingType.toLowerCase() == 'pesan antar' ? 'delivered' : 'ready to take',
+                  notificationTitle: shippingType.toLowerCase() == 'pesan antar'
+                      ? 'Pesanan ${transactions.invoiceCode} sedang diantar'
+                      : 'Pesanan ${transactions.invoiceCode} siap diambil sekarang',
+                  notificationBody: shippingType.toLowerCase() == 'pesan antar'
+                  ? null
+                  : 'Silakan datang ke Toko Sembako Budi Beras'
               );
             },
           );
@@ -201,7 +218,9 @@ class TransactionCard extends StatelessWidget {
             onClick: () {
               //updateStatus to arrived
               handleUpdateTransactionStatus(
-                  status: 'arrived'
+                status: 'arrived',
+                notificationTitle: 'Pesanan ${transactions.invoiceCode} sudah tiba di tujuan',
+                notificationBody: 'Selesaikan pesanan jika sudah menerimanya 😄'
               );
             },
           );
@@ -228,9 +247,7 @@ class TransactionCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        // if(transactions.shippingType.toLowerCase() == 'pesan antar') {
-        //   Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionDetailDelivery(transactions: transactions,)));
-        // }
+        Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionDetail(transactions: transactions,)));
       },
       child: Container(
         padding: const EdgeInsets.all(20),
