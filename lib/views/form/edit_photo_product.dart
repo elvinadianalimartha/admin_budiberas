@@ -91,10 +91,12 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
           productId: widget.productId,
           photoUrl: File(imgPicked.path),
         )) {
-          galleryProvider.getGalleries(widget.productId);
+          setState(() {
+            galleryProvider.getGalleries(widget.productId);
 
-          statusChanged = true;
-          print("tambah: $statusChanged");
+            statusChanged = true;
+            print("tambah: $statusChanged");
+          });
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -134,10 +136,12 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
           idPhoto: idPhoto,
           photoUrl: File(imgPicked.path),
         )) {
-          galleryProvider.getGalleries(widget.productId);
+          setState(() {
+            galleryProvider.getGalleries(widget.productId);
 
-          statusChanged = true;
-          print("edit: $statusChanged");
+            statusChanged = true;
+            print("edit: $statusChanged");
+          });
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -162,7 +166,7 @@ class _FormEditPhotoProductState extends State<FormEditPhotoProduct> {
 
     handleDeletePhoto(GalleryProvider galleryProvider, int idPhoto) async{
       if(await galleryProvider.deletePhoto(idPhoto: idPhoto)) {
-        galleryProvider.getGalleries(widget.productId);
+        //galleryProvider.getGalleries(widget.productId);
 
         statusChanged = true;
         print("hapus: $statusChanged");

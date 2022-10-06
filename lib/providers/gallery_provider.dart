@@ -49,6 +49,7 @@ class GalleryProvider with ChangeNotifier {
       _productGalleries = productGalleries;
     } catch(e) {
       print(e);
+      _productGalleries = [];
     }
     loading = false;
     notifyListeners();
@@ -91,6 +92,8 @@ class GalleryProvider with ChangeNotifier {
   }) async {
     try{
       if(await GalleryProductService().deletePhoto(id: idPhoto)) {
+        _productGalleries.removeWhere((e) => e.id == idPhoto);
+        notifyListeners();
         return true;
       } else {
         return false;
@@ -100,10 +103,4 @@ class GalleryProvider with ChangeNotifier {
       return false;
     }
   }
-
-  // @override
-  // void dispose() {
-  //   _galleries.clear();
-  //   super.dispose();
-  // }
 }
