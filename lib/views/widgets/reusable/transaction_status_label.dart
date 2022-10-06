@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../theme.dart';
 
 class TransactionStatusLabel {
-  Widget redLabel(String text) {
+  Widget redLabel({
+    required String text,
+    required double fontSize
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: BoxDecoration(
@@ -12,12 +15,15 @@ class TransactionStatusLabel {
       ),
       child: Text(
         text,
-        style: alertTextStyle.copyWith(fontSize: 11)
+        style: alertTextStyle.copyWith(fontSize: fontSize)
       ),
     );
   }
   
-  Widget yellowLabel(String text) {
+  Widget yellowLabel({
+    required String text,
+    required double fontSize
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: BoxDecoration(
@@ -26,12 +32,15 @@ class TransactionStatusLabel {
       ),
       child: Text(
         text,
-        style: yellowTextStyle.copyWith(fontSize: 11)
+        style: yellowTextStyle.copyWith(fontSize: fontSize)
       ),
     );
   }
   
-  Widget greenLabel(String text) {
+  Widget greenLabel({
+    required String text,
+    required double fontSize
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: BoxDecoration(
@@ -40,12 +49,15 @@ class TransactionStatusLabel {
       ),
       child: Text(
         text,
-        style: priceTextStyle.copyWith(fontSize: 11),
+        style: priceTextStyle.copyWith(fontSize: fontSize),
       ),
     );
   }
 
-  Widget blueLabel(String text) {
+  Widget blueLabel({
+    required String text,
+    required double fontSize
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: BoxDecoration(
@@ -54,12 +66,15 @@ class TransactionStatusLabel {
       ),
       child: Text(
         text,
-        style: blueTextStyle.copyWith(fontSize: 12),
+        style: blueTextStyle.copyWith(fontSize: fontSize),
       ),
     );
   }
 
-  Widget greyLabel(String text) {
+  Widget greyLabel({
+    required String text,
+    required double fontSize
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: BoxDecoration(
@@ -68,31 +83,34 @@ class TransactionStatusLabel {
       ),
       child: Text(
         text,
-        style: greyTextStyle.copyWith(fontSize: 11),
+        style: greyTextStyle.copyWith(fontSize: fontSize),
       ),
     );
   }
 
-  labellingStatus(String status) {
+  labellingStatus({
+    required String status,
+    required double fontSize
+  }) {
     switch(status.toLowerCase()) {
       case 'cancelled':
-        return redLabel('Pesanan Dibatalkan');
+        return redLabel(text: 'Pesanan Dibatalkan', fontSize: fontSize);
       case 'pending':
-        return yellowLabel('Menunggu Pembayaran');
+        return yellowLabel(text: 'Menunggu Pembayaran', fontSize: fontSize);
       case 'success': //pembayaran sukses
-        return yellowLabel('Menunggu Konfirmasi');
+        return yellowLabel(text: 'Menunggu Konfirmasi', fontSize: fontSize);
       case 'processed':
-        return yellowLabel('Diproses');
+        return yellowLabel(text: 'Diproses', fontSize: fontSize);
       case 'delivered':
-        return yellowLabel('Sedang Diantar');
+        return yellowLabel(text: 'Sedang Diantar', fontSize: fontSize);
       case 'arrived':
-        return blueLabel('Tiba di Tujuan');
+        return blueLabel(text: 'Tiba di Tujuan', fontSize: fontSize);
       case 'ready to take':
-        return blueLabel('Siap Diambil');
+        return blueLabel(text: 'Siap Diambil', fontSize: fontSize);
       case 'done':
-        return greenLabel('Selesai');
+        return greenLabel(text: 'Selesai', fontSize: fontSize);
       default:
-        return greyLabel(status);
+        return greyLabel(text: status, fontSize: fontSize);
     }
   }
 }
