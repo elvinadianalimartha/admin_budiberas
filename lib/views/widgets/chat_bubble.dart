@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/product_model.dart';
@@ -12,12 +13,14 @@ class ChatBubble extends StatelessWidget {
   final bool isSender; //if true, berarti pengirim. if false penerima
   final ProductModel? product;
   final DateTime createdAt;
+  final bool isRead;
 
   ChatBubble({
     required this.isSender,
     this.text = '',
     this.product,
     required this.createdAt,
+    required this.isRead
   });
 
   @override
@@ -35,8 +38,8 @@ class ChatBubble extends StatelessWidget {
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(isSender ? 12 : 0),
             topRight: Radius.circular(isSender ? 0 : 12),
-            bottomLeft: Radius.circular(12),
-            bottomRight: Radius.circular(12),
+            bottomLeft: const Radius.circular(12),
+            bottomRight: const Radius.circular(12),
           )
         ),
         child: Column(
@@ -100,7 +103,7 @@ class ChatBubble extends StatelessWidget {
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.6, //spy ukuran bubblenya max cm 60% dr ukuran layar
                   ),
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     right: 16,
                     left: 16,
                     top: 12,
@@ -117,17 +120,34 @@ class ChatBubble extends StatelessWidget {
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     children: [
                       Text(
                         text,
                         style: primaryTextStyle,
                       ),
-                      SizedBox(height: 6,),
-                      Text(
-                        formattedDate,
-                        style: isSender ? priceTextStyle.copyWith(fontSize: 11) : secondaryTextStyle.copyWith(fontSize: 11),
-                      ),
+                      const SizedBox(height: 6,),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            formattedDate,
+                            style: isSender ? priceTextStyle.copyWith(fontSize: 11) : secondaryTextStyle.copyWith(fontSize: 11),
+                          ),
+                          isSender
+                            ? isRead
+                              ? Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Icon(Icons.check_circle, color: secondaryColor, size: 18,),
+                              )
+                              : Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Icon(Icons.check_circle, color: secondaryTextColor, size: 18,),
+                              )
+                            : const SizedBox()
+                        ],
+                      )
                     ],
                   ),
                 ),

@@ -1,10 +1,16 @@
 import 'package:budiberas_admin_9701/models/message_detail_model.dart';
 import 'package:budiberas_admin_9701/views/widgets/chat_bubble.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../providers/auth_provider.dart';
 import '../../services/message_service.dart';
+import '../../services/notification_service.dart';
 import '../../theme.dart';
+
+import 'package:budiberas_admin_9701/constants.dart' as constants;
 
 class DetailChatPage extends StatefulWidget {
   final int userId;
@@ -33,10 +39,37 @@ class _DetailChatPageState extends State<DetailChatPage> {
       userId: widget.userId,
       imageUrl: null,
     );
+    //save sent message utk dipanggil saat send notif
+    String sentMessage = messageController.text;
 
     //clear after send message
     setState(() {
       messageController.text = '';
+    });
+
+    //get fcm token from userId
+    await context.read<AuthProvider>().getFcmToken(widget.userId);
+
+    if(context.read<AuthProvider>().fcmTokenUser != null) {
+      NotificationService().sendFcm(
+          title: 'Ada pesan baru dari Budi Beras',
+          body: sentMessage,
+          fcmToken: context.read<AuthProvider>().fcmTokenUser!
+      );
+    }
+  }
+
+  Future<void> seeMsg() async{
+    final query = await FirebaseFirestore.instance
+        .collection('messages')
+        .doc(widget.docId)
+        .collection('messageContent')
+        .where('isFromUser', isEqualTo: true)
+        .where('isRead', isEqualTo: false)
+        .get();
+
+    query.docs.forEach((doc) {
+      doc.reference.update({'isRead': true});
     });
   }
 
@@ -45,20 +78,23 @@ class _DetailChatPageState extends State<DetailChatPage> {
         stream: MessageService().getMessagesByDocId(widget.docId),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
-            return ListView( //spy list chatnya bisa discroll
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
               reverse: true,
               padding: EdgeInsets.symmetric(
                 horizontal: defaultMargin,
               ),
-              children:
-              snapshot.data!.map(
-                (MessageDetailModel message) => ChatBubble(
+              itemBuilder: (context, index) {
+                MessageDetailModel message = snapshot.data![index];
+                seeMsg();
+                return ChatBubble(
                   isSender: !message.isFromUser,
                   text: message.message,
                   product: message.product,
                   createdAt: message.createdAt,
-                )
-              ).toList(),
+                  isRead: message.isRead,
+                );
+              }
             );
           } else {
             return const Center(child: CircularProgressIndicator(),);
@@ -92,10 +128,10 @@ class _DetailChatPageState extends State<DetailChatPage> {
                       textInputAction: TextInputAction.done,
                       maxLines: null,
                       controller: messageController,
-                      style: primaryTextStyle,
+                      style: primaryTextStyle.copyWith(fontSize: 14),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Ketik pesanmu di sini...',
-                        hintStyle: greyTextStyle,
+                        hintStyle: greyTextStyle.copyWith(fontSize: 14),
                       ),
                     ),
                   ),
@@ -137,7 +173,7 @@ class _DetailChatPageState extends State<DetailChatPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage("https://ui-avatars.com/api/?background=random&name=${widget.userName}")
+                backgroundImage: NetworkImage(constants.getAvatarLink(widget.userName))
               ),
               const SizedBox(width: 20,),
               Flexible(
@@ -153,14 +189,6 @@ class _DetailChatPageState extends State<DetailChatPage> {
                       ),
                       maxLines: null,
                     ),
-                    // const SizedBox(height: 2,),
-                    // Text(
-                    //   'Aktif',
-                    //   style: whiteTextStyle.copyWith(
-                    //     fontSize: 14,
-                    //   ),
-                    //   maxLines: null,
-                    // ),
                   ],
                 ),
               ),

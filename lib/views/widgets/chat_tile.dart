@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:budiberas_admin_9701/constants.dart' as constants;
 
 import '../../theme.dart';
 
@@ -43,7 +44,12 @@ class ChatTile extends StatelessWidget {
 
     String formatCreatedAt(List doc) {
       var createdAt = DateTime.parse(doc.last.get('createdAt'));
-      var diffDay = DateTime.now().day - createdAt.day;
+
+      var outputFormat = DateFormat('yyyyMMdd');
+      var formattedNow = int.parse(outputFormat.format(DateTime.now()));
+      var formattedCreatedAt = int.parse(outputFormat.format(createdAt));
+
+      var diffDay = formattedNow - formattedCreatedAt;
       if(diffDay == 0) {
         return DateFormat("HH:mm").format(createdAt);
       } else if(diffDay == 1) {
@@ -75,7 +81,7 @@ class ChatTile extends StatelessWidget {
 
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage("https://ui-avatars.com/api/?background=random&name=${user.get('userName')}"),
+                      backgroundImage: NetworkImage(constants.getAvatarLink(user.get('userName'))),
                     ),
                     title: Text(user.get('userName'), style: primaryTextStyle,),
                     subtitle: lastMessagePreview(doc),
