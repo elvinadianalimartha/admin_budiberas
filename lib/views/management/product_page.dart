@@ -20,26 +20,28 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   TextEditingController searchController = TextEditingController(text: '');
   bool statusFilled = false;
+  late ProductProvider productProvider;
 
   @override
   void initState() {
     super.initState();
+    productProvider = Provider.of<ProductProvider>(context, listen: false);
     getInit();
   }
 
   @override
   void dispose() {
     searchController.clear();
+    productProvider.disposeSearch();
     super.dispose();
   }
 
   getInit() async {
     await Future.wait([
-      Provider.of<ProductProvider>(context, listen: false).getProducts(),
-      Provider.of<ProductProvider>(context, listen: false).pusherStock(),
-      Provider.of<ProductProvider>(context, listen: false).pusherProductStatus(),
+      productProvider.getProducts(),
+      productProvider.pusherStock(),
+      productProvider.pusherProductStatus(),
     ]);
-
   }
 
   @override
@@ -160,12 +162,18 @@ class _ProductPageState extends State<ProductPage> {
       );
     }
 
-    return WillPopScope(
-      onWillPop: () {
-        context.read<ProductProvider>().disposeValues();
-        Navigator.pop(context);
-        return Future.value(false);
-      },
+    Future<void> refreshData() async{
+      productProvider.products = [];
+
+      //search field dikosongkan spy data utuh
+      searchController.clear();
+      productProvider.disposeSearch();
+
+      await productProvider.getProducts();
+    }
+
+    return RefreshIndicator(
+      onRefresh: refreshData,
       child: Scaffold(
         appBar: customAppBar(
             text: 'Daftar Produk'
