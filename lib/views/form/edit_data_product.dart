@@ -78,9 +78,6 @@ class _FormEditDataProductState extends State<FormEditDataProduct> {
         description: descriptionController.text,
         canBeRetailed: productProvider.selectedValue,
       )) {
-
-        //Go to manage product page with newly created product
-        productProvider.getProducts();
         Navigator.popUntil(context, ModalRoute.withName('/manage-product'));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

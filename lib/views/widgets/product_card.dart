@@ -57,7 +57,6 @@ class _ProductCardState extends State<ProductCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Harga produk berhasil diperbarui'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
         );
-        productProvider.getProducts();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Harga produk gagal diperbarui'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
@@ -73,7 +72,6 @@ class _ProductCardState extends State<ProductCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Status produk berhasil diperbarui'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
         );
-        productProvider.getProducts();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Status produk gagal diperbarui'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),
@@ -87,7 +85,6 @@ class _ProductCardState extends State<ProductCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Data berhasil dihapus'), backgroundColor: secondaryColor, duration: const Duration(seconds: 2),),
         );
-        productProvider.getProducts();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text('Data gagal dihapus'), backgroundColor: alertColor, duration: const Duration(seconds: 2),),

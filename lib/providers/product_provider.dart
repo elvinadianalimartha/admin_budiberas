@@ -26,10 +26,10 @@ class ProductProvider with ChangeNotifier{
   int? _countProduct;
   int? get productInTransaction => _countProduct;
 
-  void disposeValues() {
+  void disposeSearch() {
     _searchQuery = '';
     //_products = [];
-    notifyListeners();
+    //notifyListeners();
   }
 
   Future<void> getProducts() async {
@@ -67,7 +67,6 @@ class ProductProvider with ChangeNotifier{
     required int canBeRetailed,
     List<File>? productGalleries,
   }) async {
-    //loading = true;
     try{
       if(await ProductService().createProduct(
         categoryId: categoryId,
@@ -78,8 +77,6 @@ class ProductProvider with ChangeNotifier{
         canBeRetailed: canBeRetailed,
         productGalleries: productGalleries,
       )) {
-        //loading = false;
-        notifyListeners();
         return true;
       } else {
         return false;
@@ -109,15 +106,14 @@ class ProductProvider with ChangeNotifier{
   }
 
   Future<bool> updateProduct({
-    int id = 0,
-    int? categoryId,
-    String? productName,
-    double? size,
-    double? price,
-    String? description,
-    int? canBeRetailed,
+    required int id,
+    required int categoryId,
+    required String productName,
+    required double size,
+    required double price,
+    required String description,
+    required int canBeRetailed,
   }) async {
-    //loading = true;
     try{
       if(await ProductService().updateProduct(
         id: id,
@@ -128,7 +124,14 @@ class ProductProvider with ChangeNotifier{
         description: description,
         canBeRetailed: canBeRetailed,
       )){
-        //loading = false;
+        //NOTE: jika update produk berhasil di server, data di FE diupdate scr realtime
+        //(supaya tdk perlu reload data dari awal lagi)
+        _products.firstWhere((e) => e.id == id).category.id = categoryId;
+        _products.firstWhere((e) => e.id == id).name = productName;
+        _products.firstWhere((e) => e.id == id).size = size;
+        _products.firstWhere((e) => e.id == id).price = price;
+        _products.firstWhere((e) => e.id == id).description = description;
+        _products.firstWhere((e) => e.id == id).canBeRetailed = canBeRetailed;
         notifyListeners();
         return true;
       } else {
@@ -158,16 +161,15 @@ class ProductProvider with ChangeNotifier{
   }
 
   Future<bool> updateActivationProduct({
-    int id = 0,
-    String stockStatus = '',
+    required int id,
+    required String stockStatus,
   }) async {
-    //loading = true;
     try{
       if(await ProductService().updateActivationProduct(
         id: id,
         stockStatus: stockStatus,
       )){
-        //loading = false;
+        _products.firstWhere((e) => e.id == id).stockStatus = stockStatus;
         notifyListeners();
         return true;
       } else {
@@ -180,11 +182,12 @@ class ProductProvider with ChangeNotifier{
   }
 
   Future<bool> updateProductPrice({
-    int id = 0,
-    double price = 0,
+    required int id,
+    required double price,
   }) async {
     try{
       if(await ProductService().updateProductPrice(id: id, price: price)) {
+        _products.firstWhere((e) => e.id == id).price = price;
         notifyListeners();
         return true;
       } else {
@@ -197,10 +200,11 @@ class ProductProvider with ChangeNotifier{
   }
 
   Future<bool> deleteProduct({
-    int id = 0,
+    required int id,
   }) async {
     try{
       if(await ProductService().deleteProduct(id: id)) {
+        _products.removeWhere((e) => e.id == id);
         notifyListeners();
         return true;
       } else {
